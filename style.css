@@ -52,42 +52,53 @@ body {
   gap: 20px;
 }
 
-/* Estilos base para los círculos */
+/* Cambiamos de clase circular a botones rectangulares ajustables */
 .btn-circulo {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
+  width: 110px;           /* Ancho suficiente para nombres largos */
+  height: 60px;           /* Altura en formato rectangular */
+  border-radius: 8px;     /* Esquinas suavemente redondeadas */
   border: 2px solid #000000;
   font-weight: bold;
-  font-size: 0.75rem;
+  font-size: 0.85rem;     /* Tamaño de texto balanceado */
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  word-break: break-word;
-  padding: 6px;
+  white-space: nowrap;    /* Evita que se corten o dividan palabras */
+  padding: 8px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .btn-circulo:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .btn-circulo:active {
-  transform: scale(0.95);
+  transform: scale(0.97);
 }
 
-/* Colores */
-.btn-vendedor {
-  background-color: #00a859;
-  color: #ffffff;
+/* Grilla adaptable para los botones cuadrados */
+.vendedores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 15px;
+  justify-items: center;
 }
 
-.btn-accion {
-  background-color: #ffc000;
-  color: #ffffff;
+/* Ajuste específico para computadoras / tablets */
+@media (min-width: 768px) {
+  .vendedores-grid {
+    grid-template-columns: repeat(6, 1fr);
+    flex: 1;
+  }
+
+  .btn-circulo {
+    width: 120px;
+    height: 65px;
+    font-size: 0.9rem;
+  }
 }
 
 /* Ajustes para pantallas de computadora / Tablet grande */
