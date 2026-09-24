@@ -1,4 +1,6 @@
-/* Reseteo básico */
+/* ==========================================
+   1. RESETEO Y ESTILOS GENERALES
+   ========================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -28,7 +30,7 @@ body {
   letter-spacing: 1px;
 }
 
-/* Contenedor flexible */
+/* Contenedor flexible del Dashboard */
 .dashboard-container {
   display: flex;
   flex-direction: column;
@@ -37,36 +39,38 @@ body {
   margin: 0 auto;
 }
 
-/* Grilla adaptable de botones verdes */
+/* ==========================================
+   2. GRILLAS Y BOTONES DEL DASHBOARD (NUEVO DISEÑO RECTANGULAR)
+   ========================================== */
 .vendedores-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 15px;
   justify-items: center;
+  flex: 1;
 }
 
-/* Grilla para botones amarillos */
 .acciones-grid {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 15px;
 }
 
-/* Cambiamos de clase circular a botones rectangulares ajustables */
+/* Estilo unificado para botones rectangulares con esquinas redondeadas */
 .btn-circulo {
-  width: 110px;           /* Ancho suficiente para nombres largos */
-  height: 60px;           /* Altura en formato rectangular */
-  border-radius: 8px;     /* Esquinas suavemente redondeadas */
+  width: 110px;
+  height: 60px;
+  border-radius: 8px;
   border: 2px solid #000000;
   font-weight: bold;
-  font-size: 0.85rem;     /* Tamaño de texto balanceado */
+  font-size: 0.85rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  white-space: nowrap;    /* Evita que se corten o dividan palabras */
-  padding: 8px;
+  white-space: nowrap;
+  padding: 6px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -79,52 +83,40 @@ body {
   transform: scale(0.97);
 }
 
-/* Grilla adaptable para los botones cuadrados */
-.vendedores-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 15px;
-  justify-items: center;
+/* Colores de los botones principales */
+.btn-vendedor {
+  background-color: #00a859;
+  color: #ffffff;
 }
 
-/* Ajuste específico para computadoras / tablets */
-@media (min-width: 768px) {
-  .vendedores-grid {
-    grid-template-columns: repeat(6, 1fr);
-    flex: 1;
-  }
-
-  .btn-circulo {
-    width: 120px;
-    height: 65px;
-    font-size: 0.9rem;
-  }
+.btn-accion {
+  background-color: #ffc000;
+  color: #ffffff;
 }
 
-/* Ajustes para pantallas de computadora / Tablet grande */
-@media (min-width: 768px) {
-  .dashboard-container {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-
-  .vendedores-grid {
-    grid-template-columns: repeat(6, 1fr);
-    flex: 1;
-  }
-
-  .acciones-grid {
-    flex-direction: column;
-  }
-
-  .btn-circulo {
-    width: 100px;
-    height: 100px;
-    font-size: 0.85rem;
-  }
+/* ==========================================
+   3. ESTILOS DE FORMULARIOS DE PEDIDOS Y ACCIONES
+   ========================================== */
+.btn-inicio {
+  background-color: #ffc107;
+  color: #000000;
 }
-/* Estilos Formulario de Pedidos */
+
+.btn-guardar {
+  background-color: #28a745;
+  color: #ffffff;
+}
+
+.btn-liquidar {
+  background-color: #17a2b8;
+  color: #ffffff;
+}
+
+.btn-borrar {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
 .pedido-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -176,7 +168,6 @@ body {
   min-width: 250px;
 }
 
-/* Contenedor azul de botones */
 .caja-botones {
   background-color: #4a82c4;
   border-radius: 12px;
@@ -193,7 +184,6 @@ body {
   letter-spacing: 1px;
 }
 
-/* Distribución en cuadrícula 2 por fila */
 .grid-botones {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -201,48 +191,6 @@ body {
   justify-items: center;
   align-items: center;
 }
-
-/* Estilo general para los botones redondos */
-.btn-circulo {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  border: 2px solid #000000;
-  font-weight: bold;
-  font-size: 0.72rem;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.btn-circulo:active {
-  transform: scale(0.95);
-}
-
-/* Colores específicos para cada acción */
-.btn-inicio {
-  background-color: #ffc107; /* Amarillo */
-  color: #000000;
-}
-
-.btn-guardar {
-  background-color: #28a745; /* Verde */
-  color: #ffffff;
-}
-
-.btn-liquidar {
-  background-color: #17a2b8; /* Azul claro */
-  color: #ffffff;
-}
-
-.btn-borrar {
-  background-color: #dc3545; /* Rojo */
-  color: #ffffff;
-}
-
 
 .caja-dinero {
   border: 1px solid #000;
@@ -263,11 +211,10 @@ body {
   padding: 5px 15px;
   font-weight: bold;
 }
-/* Color rojo/naranja para el botón Borrar */
-.btn-borrar {
-  background-color: #dc3545;
-  color: #ffffff;
-}
+
+/* ==========================================
+   4. ESTILOS DE ARQUEO
+   ========================================== */
 .arqueo-container {
   padding: 20px;
   max-width: 1100px;
@@ -343,16 +290,9 @@ body {
   justify-content: center;
 }
 
-.btn-accion {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
 .btn-volver { background-color: #6c757d; color: white; }
 .btn-excel { background-color: #28a745; color: white; }
+
 .filtro-fechas {
   display: flex;
   align-items: center;
@@ -379,4 +319,29 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+}
+
+/* ==========================================
+   5. MEDIA QUERIES (DESKTOP Y PANTALLAS GRANDES)
+   ========================================== */
+@media (min-width: 768px) {
+  .dashboard-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .vendedores-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .acciones-grid {
+    flex-direction: column;
+  }
+
+  .btn-circulo {
+    width: 120px;
+    height: 65px;
+    font-size: 0.9rem;
+  }
 }
