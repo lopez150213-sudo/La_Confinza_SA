@@ -1,0 +1,103 @@
+<div class="pedido-container">
+  
+  <div class="vendedor-header">
+    <h2 id="nombre-vendedor">VENDEDOR</h2>
+  </div>
+
+  <div class="layout-pedido">
+    <!-- Tabla de Productos -->
+    <div class="seccion-tabla">
+      <table class="tabla-productos" id="tabla-productos">
+        <thead>
+          <tr>
+            <th>PRODUCTO</th>
+            <th>PRECIO</th>
+            <th>CANTIDAD</th>
+            <th>TOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>BARRITA</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>BARRITA DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>HAMBURGUESA PEQUEÑA</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>HAMBURGUESA PEQUEÑA DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>HAMBURGUESA MEDIANA</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>HAMBURGUESA MEDIANA DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>BOLLONCITO</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>BOLLONCITO DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>CONCHA</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>CONCHA DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>TRENZA DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>BOLLON DE 4</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>BOLLON DE 4 DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>BOLLON DE 5</td><td class="precio">20</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>PICOS</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>PICOS DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>MANJAR</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>MANJAR DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>TOSTADO</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>TOSTADO DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>ROSCA</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>ROSCA DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>EMPANADA</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>EMPANADA DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>PIQUITO DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>POLVORON DOBLE</td><td class="precio">16</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>HOT-DOG</td><td class="precio">40</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>HAMBURGUESA DE ARO</td><td class="precio">37</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>CONCHA INDIVIDUAL</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>BARRA CUADRADA</td><td class="precio">8</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+          <tr><td>MOLDE</td><td class="precio">40</td><td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td><td class="total-fila">C$0.00</td></tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="2">TOTALES</th>
+            <th id="total-unidades">0</th>
+            <th id="total-monto">C$0.00</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Panel Lateral: Dinero y Botones -->
+    <div class="seccion-lateral">
+      
+      <!-- Cuadro Azul de Botones con Distribución Cuadrícula -->
+      <div class="caja-botones">
+        <h3>BOTONES</h3>
+        <div class="grid-botones">
+          <button class="btn-circulo btn-inicio" onclick="volverInicio()">INICIO</button>
+          <button class="btn-circulo btn-guardar" onclick="guardarPedido()">GUARDAR</button>
+          <button class="btn-circulo btn-liquidar" onclick="liquidarPedido()">LIQUIDAR</button>
+          <button class="btn-circulo btn-borrar" onclick="limpiarFormulario()">BORRAR</button>
+        </div>
+      </div>
+
+      <!-- Cuadro Dinero -->
+      <div class="caja-dinero">
+        <h4>DINERO</h4>
+        <table id="tabla-dinero">
+          <tr><td>36.5</td><td><input type="number" min="0" value="0" data-denom="36.5" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>1000</td><td><input type="number" min="0" value="0" data-denom="1000" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>500</td><td><input type="number" min="0" value="0" data-denom="500" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>200</td><td><input type="number" min="0" value="0" data-denom="200" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>100</td><td><input type="number" min="0" value="0" data-denom="100" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>50</td><td><input type="number" min="0" value="0" data-denom="50" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>20</td><td><input type="number" min="0" value="0" data-denom="20" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>10</td><td><input type="number" min="0" value="0" data-denom="10" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>5</td><td><input type="number" min="0" value="0" data-denom="5" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>1</td><td><input type="number" min="0" value="0" data-denom="1" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr><td>0.5</td><td><input type="number" min="0" value="0" data-denom="0.5" onfocus="this.select()" oninput="calcularPedido()"></td></tr>
+          <tr class="fila-total"><td>TOTAL</td><td id="total-efectivo">C$0.00</td></tr>
+        </table>
+      </div>
+
+      <!-- Cuadro Diferencia -->
+      <div class="caja-diferencia">
+        <span>DIFERENCIA</span>
+        <div class="alerta-roja" id="box-diferencia">C$0.00</div>
+      </div>
+
+    </div>
+  </div>
+</div>

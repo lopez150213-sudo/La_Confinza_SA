@@ -1,0 +1,82 @@
+<div class="arqueo-container">
+  
+  <div class="arqueo-header">
+  <h2>ARQUEO GENERAL DE CAJA</h2>
+  
+  <!-- Controles de Filtro por Fecha -->
+  <div class="filtro-fechas">
+    <label for="fecha-inicio">Desde:</label>
+    <input type="date" id="fecha-inicio" onchange="procesarArqueoGeneral()">
+    
+    <label for="fecha-fin">Hasta:</label>
+    <input type="date" id="fecha-fin" onchange="procesarArqueoGeneral()">
+    
+    <button class="btn-accion btn-hoy" onclick="cargarHoy()">VER HOY</button>
+  </div>
+</div>
+
+
+  <!-- Tarjetas de Resumen General -->
+  <div class="resumen-cards">
+    <div class="card card-total-pan">
+      <h3>TOTAL PAN (VENTA)</h3>
+      <p id="card-total-pan">C$0.00</p>
+    </div>
+    <div class="card card-total-efectivo">
+      <h3>TOTAL EFECTIVO</h3>
+      <p id="card-total-efectivo">C$0.00</p>
+    </div>
+    <div class="card card-diferencia" id="card-diferencia-box">
+      <h3>DIFERENCIA TOTAL</h3>
+      <p id="card-diferencia">C$0.00</p>
+    </div>
+  </div>
+
+  <div class="layout-arqueo">
+    
+    <!-- Tabla Resumen por Vendedor -->
+    <div class="seccion-vendedores">
+      <h3>Detalle por Vendedor</h3>
+      <table class="tabla-arqueo" id="tabla-vendedores-arqueo">
+        <thead>
+          <tr>
+            <th>VENDEDOR</th>
+            <th>FECHA / HORA</th>
+            <th>PAN (C$)</th>
+            <th>EFECTIVO (C$)</th>
+            <th>DIFERENCIA</th>
+            <th>ESTADO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Se llena dinámicamente desde JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Consolidado de Billetes y Monedas en Caja -->
+    <div class="seccion-billetes-consolidado">
+      <h3>Efectivo Consolidado en Caja</h3>
+      <table class="tabla-dinero" id="tabla-consolidado-dinero">
+        <thead>
+          <tr>
+            <th>DENOM.</th>
+            <th>CANT. TOTAL</th>
+            <th>SUBTOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Se llena dinámicamente desde JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Botones de Acción -->
+  <div class="acciones-arqueo">
+    <button class="btn-accion btn-volver" onclick="volverInicio()">VOLVER AL MENÚ</button>
+    <button class="btn-accion btn-excel" onclick="exportarExcelArqueo()">EXPORTAR A EXCEL</button>
+  </div>
+
+</div>

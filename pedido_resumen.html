@@ -1,0 +1,79 @@
+<div class="arqueo-container">
+  
+  <div class="arqueo-header">
+    <h2>CONSOLIDADO DE PEDIDOS Y PRODUCCIÓN</h2>
+    
+    <!-- Filtro de fechas -->
+    <div class="filtro-fechas">
+      <label for="fecha-inicio-pedido">Desde:</label>
+      <input type="date" id="fecha-inicio-pedido" onchange="procesarResumenPedidos()">
+      
+      <label for="fecha-fin-pedido">Hasta:</label>
+      <input type="date" id="fecha-fin-pedido" onchange="procesarResumenPedidos()">
+      
+      <button class="btn-accion btn-hoy" onclick="cargarHoyPedidos()">VER HOY</button>
+    </div>
+  </div>
+
+  <!-- Tarjetas de Resumen -->
+  <div class="resumen-cards">
+    <div class="card card-total-pan">
+      <h3>TOTAL PIEZAS (PAN)</h3>
+      <p id="card-total-piezas">0</p>
+    </div>
+    <div class="card card-total-efectivo">
+      <h3>TOTAL SARTENES / LATAS</h3>
+      <p id="card-total-sartenes">0</p>
+    </div>
+  </div>
+
+ <!-- Tablas de producción -->
+<div class="layout-arqueo" style="display: flex; flex-direction: column; gap: 20px;">
+  
+  <!-- TABLA 1: CONSOLIDADO PARA HORNO (Agrupado por Masa/Sartén) -->
+  <div class="seccion-vendedores">
+    <h3 style="color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 5px;">
+      🔥 Consolidado para Horno (Sartenes Agrupados)
+    </h3>
+    <table class="tabla-arqueo" id="tabla-consolidado-horno">
+      <thead>
+        <tr>
+          <th>GRUPO / PRODUCTO</th>
+          <th>CÁLCULO / EQUIVALENCIA</th>
+          <th>RENDIMIENTO</th>
+          <th>SARTENES / LATAS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Carga dinámica -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- TABLA 2: DETALLE INDIVIDUAL (Para Administración y Control) -->
+  <div class="seccion-vendedores">
+    <h3 style="color: #0275d8; border-bottom: 2px solid #0275d8; padding-bottom: 5px;">
+      📋 Detalle Individual por Producto (Control Admin)
+    </h3>
+    <table class="tabla-arqueo" id="tabla-resumen-produccion">
+      <thead>
+        <tr>
+          <th>PRODUCTO</th>
+          <th>PIEZAS SOLICITADAS</th>
+          <th>OBSERVACIÓN CÁLCULO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Carga dinámica -->
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+  <!-- Botón volver -->
+  <div class="acciones-arqueo">
+    <button class="btn-accion btn-volver" onclick="volverInicio()">VOLVER AL MENÚ</button>
+  </div>
+
+</div>

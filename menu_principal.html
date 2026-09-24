@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panadería La Confianza S.A</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+</head>
+<body>
+
+  <!-- Contenedor dinámico donde se intercambiarán las vistas -->
+  <div id="app-content">
+
+    <header class="header-banner">
+      <h1>PANADERIA LA CONFIANZA S.A</h1>
+    </header>
+
+    <main class="dashboard-container">
+      <section class="vendedores-grid">
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('EZEQUIEL')">EZEQUIEL</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ISABEL')">ISABEL</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ANTONIA')">ANTONIA</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('MIGUEL')">MIGUEL</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ALEJANDRO')">ALEJANDRO</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('VENTA')">VENTA</button>
+
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ERNESTO')">ERNESTO</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('RAFAEL')">RAFAEL</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ALBERTH')">ALBERTH</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('KARLA')">KARLA</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('CHOMBO')">CHOMBO</button>
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('CAROLINA')">CAROLINA</button>
+
+        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ENGEL')">ENGEL</button>
+      </section>
+
+      <section class="acciones-grid">
+        <button class="btn-circulo btn-accion" onclick="abrirModulo('PEDIDO')">PEDIDO</button>
+        <button class="btn-circulo btn-accion" onclick="abrirArqueoGeneral()">ARQUEO</button>
+
+      </section>
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
