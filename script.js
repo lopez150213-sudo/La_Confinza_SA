@@ -41,6 +41,43 @@ const RENDIMIENTO_PRODUCTOS = {
   "MOLDE": 1                // Molde individual
 };
 
+// ==========================================
+// LISTA DE PRECIOS AL DETALLE / VENTA LOCAL
+// ==========================================
+const PRECIOS_VENTA_LOCAL = {
+  "BARRITA": 10,
+  "BARRITA DOBLE": 20,
+  "HAMBURGUESA PEQUEÑA": 10,
+  "HAMBURGUESA PEQUEÑA DOBLE": 20,
+  "HAMBURGUESA MEDIANA": 10,
+  "HAMBURGUESA MEDIANA DOBLE": 20,
+  "BOLLONCITO": 10,
+  "BOLLONCITO DOBLE": 20,
+  "CONCHA": 10,
+  "CONCHA DOBLE": 20,
+  "TRENZA DOBLE": 20,
+  "BOLLON DE 4": 30,
+  "BOLLON DE 4 DOBLE": 60,
+  "BOLLON DE 5": 35,
+  "PICOS": 10,
+  "PICOS DOBLE": 20,
+  "MANJAR": 10,
+  "MANJAR DOBLE": 20,
+  "TOSTADO": 10,
+  "TOSTADO DOBLE": 20,
+  "ROSCA": 10,
+  "ROSCA DOBLE": 20,
+  "EMPANADA": 10,
+  "EMPANADA DOBLE": 20,
+  "PIQUITO DOBLE": 20,
+  "POLVORON DOBLE": 20,
+  "HOT-DOG": 15,
+  "HAMBURGUESA DE ARO": 15,
+  "CONCHA INDIVIDUAL": 15,
+  "BARRA CUADRADA": 15,
+  "MOLDE": 30
+};
+
 // Función auxiliar para calcular sartenes/latas redondeado hacia arriba
 function calcularSartenes(nombreProducto, cantidadTotal) {
   const capacidad = RENDIMIENTO_PRODUCTOS[nombreProducto] || 1;
@@ -75,6 +112,20 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// NAVEGACIÓN PRINCIPAL
+function abrirArqueoGeneral() {
+  window.location.href = 'arqueo_general.html';
+}
+
+function volverInicio() {
+  const appContent = document.getElementById('app-content');
+  if (appContent && vistaMenuPrincipal) {
+    appContent.innerHTML = vistaMenuPrincipal;
+  } else {
+    window.location.href = 'index.html';
+  }
+}
+
 // Cargar pantalla de pedido e inyectar vendedor
 function abrirPedido(vendedor) {
   pedidoIdActual = null; // Reiniciar estado de ID
@@ -87,19 +138,23 @@ function abrirPedido(vendedor) {
       document.getElementById('app-content').innerHTML = html;
       const elVendedor = document.getElementById('nombre-vendedor');
       if (elVendedor) elVendedor.innerText = vendedor;
-      
+
+      // Si el vendedor es VENTA LOCAL, ajustar precios al detalle en la tabla
+      if (vendedor === 'VENTA LOCAL') {
+        const filas = document.querySelectorAll('#tabla-productos tbody tr');
+        filas.forEach(fila => {
+          const nombreProd = fila.cells[0].innerText.trim();
+          const elPrecio = fila.querySelector('.precio');
+          if (elPrecio && PRECIOS_VENTA_LOCAL[nombreProd] !== undefined) {
+            elPrecio.innerText = `C$${PRECIOS_VENTA_LOCAL[nombreProd].toFixed(2)}`;
+          }
+        });
+      }
+
       // Buscar si el vendedor ya tiene un borrador guardado hoy
       cargarPedidoExistente(vendedor);
     })
     .catch(error => console.error('Error:', error));
-}
-
-// Regresar al menú principal
-function volverInicio() {
-  const appContent = document.getElementById('app-content');
-  if (appContent && vistaMenuPrincipal) {
-    appContent.innerHTML = vistaMenuPrincipal;
-  }
 }
 
 // Cálculo en tiempo real de Pan, Dinero y Diferencia
@@ -319,31 +374,7 @@ function limpiarFormulario() {
   calcularPedido();
 }
 
-// Abrir y procesar la vista de Arqueo General
-function abrirArqueoGeneral() {
-  fetch('arqueo_general.html')
-    .then(response => {
-      if (!response.ok) throw new Error('Error al cargar arqueo_general.html');
-      return response.text();
-    })
-    .then(html => {
-      document.getElementById('app-content').innerHTML = html;
-      
-      // Mostrar la fecha de hoy en pantalla
-      const hoy = new Date();
-      const elFecha = document.getElementById('fecha-arqueo');
-      if (elFecha) {
-        elFecha.innerText = hoy.toLocaleDateString('es-NI', {
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-        });
-      }
-
-      // Cargar los datos desde Supabase
-      procesarArqueoGeneral();
-    })
-    .catch(err => console.error('Error abriendo Arqueo General:', err));
-}
-
+// Helper para fechas por defecto en Arqueo
 function establecerFechasPorDefecto() {
   const hoy = new Date().toISOString().split('T')[0];
   const inputInicio = document.getElementById('fecha-inicio');
@@ -353,7 +384,7 @@ function establecerFechasPorDefecto() {
   if (inputFin && !inputFin.value) inputFin.value = hoy;
 }
 
-function cargarHoy() {
+function cargarHoyArqueo() {
   const hoy = new Date().toISOString().split('T')[0];
   const inputInicio = document.getElementById('fecha-inicio');
   const inputFin = document.getElementById('fecha-fin');
@@ -362,7 +393,7 @@ function cargarHoy() {
   procesarArqueoGeneral();
 }
 
-// Consultar Supabase con rango de fechas dinámico (Arqueo General con Fecha/Hora)
+// Consultar Supabase con rango de fechas dinámico (Arqueo General + Gastos)
 async function procesarArqueoGeneral() {
   try {
     establecerFechasPorDefecto();
@@ -373,18 +404,30 @@ async function procesarArqueoGeneral() {
     const inicio = new Date(`${fechaInicioVal}T00:00:00`);
     const fin = new Date(`${fechaFinVal}T23:59:59.999`);
 
-    const { data: pedidos, error } = await supabaseClient
+    // 1. Consultar PEDIDOS
+    const { data: pedidos, error: errPedidos } = await supabaseClient
       .from('pedidos')
       .select('*')
       .gte('created_at', inicio.toISOString())
       .lte('created_at', fin.toISOString())
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (errPedidos) throw errPedidos;
+
+    // 2. Consultar GASTOS
+    const { data: gastos, error: errGastos } = await supabaseClient
+      .from('gastos')
+      .select('*')
+      .gte('created_at', inicio.toISOString())
+      .lte('created_at', fin.toISOString())
+      .order('created_at', { ascending: false });
+
+    if (errGastos) throw errGastos;
 
     let sumaTotalPan = 0;
     let sumaTotalEfectivo = 0;
-    
+    let sumaTotalGastos = 0;
+
     const consolidadoBilletes = {
       '36.5': 0, '1000': 0, '500': 0, '200': 0, '100': 0,
       '50': 0, '20': 0, '10': 0, '5': 0, '1': 0, '0.5': 0
@@ -429,16 +472,27 @@ async function procesarArqueoGeneral() {
       });
     }
 
-    // Actualizar Tarjetas
+    // Sumar Total de Gastos
+    if (gastos && gastos.length > 0) {
+      gastos.forEach(g => {
+        sumaTotalGastos += parseFloat(g.monto) || 0;
+      });
+    }
+
+    // Actualizar Tarjetas Principales
     const elCardPan = document.getElementById('card-total-pan');
     const elCardEfectivo = document.getElementById('card-total-efectivo');
+    const elCardGastos = document.getElementById('card-total-gastos');
+
     if (elCardPan) elCardPan.innerText = `C$${sumaTotalPan.toFixed(2)}`;
     if (elCardEfectivo) elCardEfectivo.innerText = `C$${sumaTotalEfectivo.toFixed(2)}`;
-    
-    const diferenciaTotal = sumaTotalEfectivo - sumaTotalPan;
+    if (elCardGastos) elCardGastos.innerText = `C$${sumaTotalGastos.toFixed(2)}`;
+
+    // La diferencia real toma en cuenta los gastos realizados
+    const diferenciaTotal = (sumaTotalEfectivo + sumaTotalGastos) - sumaTotalPan;
     const cardDif = document.getElementById('card-diferencia');
     const cardDifBox = document.getElementById('card-diferencia-box');
-    
+
     if (cardDif) cardDif.innerText = `C$${diferenciaTotal.toFixed(2)}`;
     if (cardDifBox) {
       if (diferenciaTotal === 0) {
@@ -569,9 +623,7 @@ async function procesarResumenPedidos() {
     // Helper para obtener cantidad
     const getCant = (nombre) => totales[nombre] || 0;
 
-    // ==========================================
     // CÁLCULO CONSOLIDADO PARA HORNO
-    // ==========================================
     const gruposHorno = [
       {
         nombre: "BARRITA / BARRITA DOBLE",
@@ -779,5 +831,68 @@ async function procesarResumenPedidos() {
   } catch (err) {
     console.error('Error procesando el resumen de pedidos:', err);
     alert('❌ Ocurrió un error al consolidar los pedidos.');
+  }
+}
+
+// ==========================================
+// MÓDULO DE GESTIÓN DE GASTOS
+// ==========================================
+
+function abrirFormularioGasto() {
+  const htmlGasto = `
+    <div class="pedido-container" style="max-width: 500px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 8px; border: 2px solid #fd7e14;">
+      <h2 style="text-align: center; margin-bottom: 15px; color: #fd7e14;">💸 Registrar Gasto de Caja</h2>
+      <form id="form-gasto" onsubmit="guardarGasto(event)">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Concepto / Categoría:</label>
+          <select id="gasto-concepto" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
+            <option value="Bolsas y Empaques">Bolsas y Empaques</option>
+            <option value="Insumos / Materiales">Insumos / Materiales</option>
+            <option value="Transporte / Flete">Transporte / Flete</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Otros Gastos">Otros Gastos</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Monto (C$):</label>
+          <input type="number" id="gasto-monto" step="0.01" min="1" placeholder="Ej. 200.00" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required />
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Observación / Detalle:</label>
+          <input type="text" id="gasto-observacion" placeholder="Ej. Compra de 200 bolsas para pan" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <button type="submit" class="btn-circulo btn-guardar" style="width: auto; padding: 10px 20px; height: auto;">Guardar Gasto</button>
+          <button type="button" class="btn-circulo btn-volver" onclick="volverInicio()" style="width: auto; padding: 10px 20px; height: auto;">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.getElementById('app-content').innerHTML = htmlGasto;
+}
+
+async function guardarGasto(e) {
+  e.preventDefault();
+  const concepto = document.getElementById('gasto-concepto').value;
+  const monto = parseFloat(document.getElementById('gasto-monto').value) || 0;
+  const observacion = document.getElementById('gasto-observacion').value;
+
+  if (monto <= 0) {
+    alert('⚠️ Ingrese un monto válido.');
+    return;
+  }
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('gastos')
+      .insert([{ concepto, monto, observacion }]);
+
+    if (error) throw error;
+
+    alert(`✅ Gasto de C$${monto.toFixed(2)} registrado correctamente.`);
+    volverInicio();
+  } catch (err) {
+    console.error('Error al guardar el gasto:', err);
+    alert('❌ Ocurrió un error al registrar el gasto.');
   }
 }
