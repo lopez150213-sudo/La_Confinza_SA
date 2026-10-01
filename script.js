@@ -38,7 +38,9 @@ const RENDIMIENTO_PRODUCTOS = {
   "HAMBURGUESA DE ARO": 6,  // 6 piezas por sartén
   "CONCHA INDIVIDUAL": 6,   // 6 piezas por sartén
   "BARRA CUADRADA": 6,      // 6 piezas por sartén
-  "MOLDE": 1                // Molde individual
+  "MOLDE": 1,                // Molde individual
+  "Barra de Mantequilla":1, // Unidad base
+  "Cacho con Mantequilla":1 // Unidad base
 };
 
 // ==========================================
@@ -75,7 +77,9 @@ const PRECIOS_VENTA_LOCAL = {
   "HAMBURGUESA DE ARO": 15,
   "CONCHA INDIVIDUAL": 15,
   "BARRA CUADRADA": 15,
-  "MOLDE": 30
+  "MOLDE": 30,
+  "Barra de Mantequilla": 20,
+  "Cacho con Mantequilla": 20
 };
 
 // Función auxiliar para calcular sartenes/latas redondeado hacia arriba
