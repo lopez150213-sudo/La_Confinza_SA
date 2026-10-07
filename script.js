@@ -39,8 +39,9 @@ const RENDIMIENTO_PRODUCTOS = {
   "CONCHA INDIVIDUAL": 6,   // 6 piezas por sartén
   "BARRA CUADRADA": 6,      // 6 piezas por sartén
   "MOLDE": 1,                // Molde individual
-  "Barra de Mantequilla":1, // Unidad base
-  "Cacho con Mantequilla":1 // Unidad base
+  "BARRA DE MANTEQUILLA":1, // Unidad base
+  "CACHO CON MANTEQUILLA":1, // Unidad base
+  "ENROLLADO DOBLE": 2.5  // 2.5 piezas por sartén (cada sartén produce 2.5 enrollados dobles)
 };
 
 // ==========================================
@@ -78,8 +79,9 @@ const PRECIOS_VENTA_LOCAL = {
   "CONCHA INDIVIDUAL": 15,
   "BARRA CUADRADA": 15,
   "MOLDE": 30,
-  "Barra de Mantequilla": 20,
-  "Cacho con Mantequilla": 20
+  "BARRA DE MANTEQUILLA": 20,
+  "CACHO CON MANTEQUILLA": 20,
+  "ENROLLADO DOBLE": 20
 };
 
 // Función auxiliar para calcular sartenes/latas redondeado hacia arriba
@@ -770,6 +772,29 @@ async function procesarResumenPedidos() {
         formulaTexto: `${getCant("MOLDE")} piezas`,
         rendimientoTexto: "1 molde/unidad",
         sartenes: getCant("MOLDE")
+      },
+      {
+        nombre: "BARRA DE MANTEQUILLA",
+        piezasBase: getCant("BARRA DE MANTEQUILLA"),
+        formulaTexto: `${getCant("BARRA DE MANTEQUILLA")} piezas`,
+        rendimientoTexto: "1 barra/unidad",
+        sartenes: getCant("BARRA DE MANTEQUILLA")
+      }
+      ,
+      {
+        nombre: "CACHO CON MANTEQUILLA",
+        piezasBase: getCant("CACHO CON MANTEQUILLA"),
+        formulaTexto: `${getCant("CACHO CON MANTEQUILLA")} piezas`,
+        rendimientoTexto: "1 cacho/unidad",
+        sartenes: getCant("CACHO CON MANTEQUILLA")
+      }
+      ,
+       {
+        nombre: "ENROLLADO DOBLE",
+        piezasBase: getCant("ENROLLADO DOBLE") * 2,
+        formulaTexto: `${getCant("ENROLLADO DOBLE")} D × 2`,
+        rendimientoTexto: "2.5 piezas/sartén",
+        sartenes: Math.ceil((getCant("ENROLLADO DOBLE") * 2) / 2.5)
       }
     ];
 
