@@ -811,9 +811,6 @@ async function procesarResumenPedidos() {
   }
 }
 
-
-
-
 // ==========================================
 // MÓDULO DE ARQUEO GENERAL DE CAJA
 // ==========================================
@@ -1109,7 +1106,8 @@ async function cargarGastosHoy() {
     }
 
     gastos.forEach(g => {
-      const hora = g.created_at ? g.created_at.replace('T', ' ').slice(11, 16) : 'N/A';
+      
+      const hora = g.created_at ? new Date(g.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A';
       const fila = document.createElement('tr');
       fila.innerHTML = `
         <td>${hora}</td>
