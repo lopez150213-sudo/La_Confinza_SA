@@ -1,358 +1,301 @@
 /* ==========================================
-   1. RESETEO Y ESTILOS GENERALES
+   PALETA DE COLORES PERSONALIZADA (PANADERÍA)
    ========================================== */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
+:root {
+  --primary: #faa200;       /* Orange Peel (Color principal vibrante) */
+  --primary-hover: #d99f3a; /* Anzac (Efecto hover más tostado) */
+  --success: #efca6c;       /* Rob Roy (Para estados guardados / éxito cálido) */
+  --success-hover: #d99f3a; 
+  --warning: #f3d74f;       /* Cream Can (Alertas y avisos) */
+  --danger: #a55d22;        /* Desert (Tonos oscuros / peligro / eliminar) */
+  --danger-hover: #8e4e1b;
+  --slate: #d99f3a;         /* Anzac / Tono neutro cálido para liquidados */
+  --bg-app: #fdfbf7;        /* Fondo general marfil muy suave y limpio */
+  --card-bg: #ffffff;
+  --text-main: #2d1e12;     /* Texto principal oscuro cálido */
+  --border-color: #f1e5d1;  /* Bordes suaves acorde a la paleta */
 }
 
 body {
-  background-color: #f4f6f8;
-  padding: 15px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  margin: 0;
+  padding: 20px;
 }
 
-/* Banner superior dinámico */
-.header-banner {
-  background-color: #ffffff;
-  border: 2px solid #2b579a;
-  border-radius: 4px;
-  padding: 12px;
-  text-align: center;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.header-banner h1 {
-  color: #000000;
-  font-size: clamp(1.1rem, 4vw, 1.8rem);
-  letter-spacing: 1px;
-}
-
-/* Contenedor flexible del Dashboard */
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  max-width: 1200px;
+/* Contenedor Principal Amplio */
+.container-main, #app-content {
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 25px;
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(165, 93, 34, 0.08), 0 8px 10px -6px rgba(165, 93, 34, 0.02);
+  border: 1px solid var(--border-color);
 }
 
-/* ==========================================
-   2. GRILLAS Y BOTONES DEL DASHBOARD (NUEVO DISEÑO RECTANGULAR)
-   ========================================== */
-.vendedores-grid {
+/* Encabezados */
+h1, h2, h3 {
+  color: #3b2314;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.header-title {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+/* Grilla de Botones de Vendedores */
+.grid-vendedores {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 15px;
-  justify-items: center;
-  flex: 1;
+  margin-bottom: 30px;
 }
 
-.acciones-grid {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-/* Estilo unificado para botones rectangulares con esquinas redondeadas */
-.btn-circulo {
-  width: 110px;
-  height: 60px;
-  border-radius: 8px;
-  border: 2px solid #000000;
-  font-weight: bold;
-  font-size: 0.85rem;
+/* Botones Vendedores y Módulos */
+.btn-vendedor, .btn-circulo {
+  background-color: var(--primary);
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 16px 12px;
+  border-radius: 10px;
+  border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(250, 162, 0, 0.2);
   text-align: center;
-  white-space: nowrap;
-  padding: 6px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.btn-circulo:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+.btn-vendedor:hover, .btn-circulo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(217, 159, 58, 0.3);
+  background-color: var(--primary-hover);
 }
 
-.btn-circulo:active {
-  transform: scale(0.97);
+
+/* Estados de Vendedores Aplicados a la Paleta */
+button.btn-vendedor.guardado, button.btn-circulo.guardado {
+  background-color: var(--success) !important;
+  color: #f5ffeae0 !important;
+  box-shadow: 0 4px 10px rgba(119, 234, 5, 0.832) !important;
 }
 
-/* Colores de los botones principales */
-.btn-vendedor {
-  background-color: #00a859;
-  color: #ffffff;
+button.btn-vendedor.liquidado, button.btn-circulo.liquidado {
+  background-color: var(--slate) !important;
+  box-shadow: 0 4px 10px rgb(251, 17, 0) !important;
+  opacity: 0.9;
 }
 
-.btn-accion {
-  background-color: #ffc000;
-  color: #ffffff;
-}
+/* Botones Especiales de Módulos */
+.btn-venta-local { background-color: #efca6c !important; color: #2d1e12 !important; }
+.btn-gastos { background-color: var(--primary) !important; }
+.btn-pedido { background-color: #d99f3a !important; }
+.btn-arqueo { background-color: var(--danger) !important; }
 
-/* ==========================================
-   3. ESTILOS DE FORMULARIOS DE PEDIDOS Y ACCIONES
-   ========================================== */
-.btn-inicio {
-  background-color: #ffc107;
-  color: #000000;
-}
-
-.btn-guardar {
-  background-color: #28a745;
-  color: #ffffff;
-}
-
-.btn-liquidar {
-  background-color: #17a2b8;
-  color: #ffffff;
-}
-
-.btn-borrar {
-  background-color: #dc3545;
-  color: #ffffff;
-}
-
-.pedido-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.vendedor-header {
-  border: 2px solid #2b579a;
-  padding: 8px 20px;
-  margin-bottom: 20px;
-  background-color: #fff;
-}
-
-.layout-pedido {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.seccion-tabla {
-  flex: 2;
-  min-width: 300px;
-}
-
-.tabla-productos, .caja-dinero table {
+/* Tablas con el estilo de bordes cálidos */
+table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
+  margin-top: 15px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.tabla-productos th, .tabla-productos td, 
-.caja-dinero td {
-  border: 1px solid #ccc;
-  padding: 6px 10px;
+th {
+  background-color: #fef6e7;
+  color: #5c3a21;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  padding: 12px 16px;
   text-align: left;
-  font-size: 0.9rem;
 }
 
-.tabla-productos input, .caja-dinero input {
-  width: 60px;
-  padding: 4px;
-  text-align: right;
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.95rem;
 }
 
-.seccion-lateral {
-  flex: 1;
+tr:hover {
+  background-color: #fefaf2;
+}
+
+/* Inputs Interactivos */
+input[type="number"], input[type="text"], input[type="date"], select {
+  padding: 8px 12px;
+  border: 1px solid #e6d2b5;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+  background-color: #fffcf7;
+}
+
+input[type="number"]:focus, input[type="text"]:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(250, 162, 0, 0.15);
+}
+
+/* Ventanas Modales */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(45, 30, 18, 0.55);
+  backdrop-filter: blur(4px);
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-width: 250px;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
-.caja-botones {
-  background-color: #4a82c4;
-  border-radius: 12px;
-  padding: 15px;
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-box {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
   text-align: center;
-  color: #ffffff;
-  margin-bottom: 15px;
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
 }
 
-.caja-botones h3 {
-  margin-top: 0;
+.modal-overlay.active .modal-box {
+  transform: translateY(0);
+}
+
+.modal-title {
+  font-size: 1.3rem;
+  font-weight: 700;
   margin-bottom: 12px;
-  font-size: 1.2rem;
-  letter-spacing: 1px;
+  color: #3b2314;
 }
 
-.grid-botones {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+.modal-body {
+  font-size: 1rem;
+  color: #6b4c35;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
   gap: 12px;
-  justify-items: center;
-  align-items: center;
+  justify-content: center;
 }
 
-.caja-dinero {
-  border: 1px solid #000;
-  padding: 10px;
-  background: #fff;
+.btn-modal {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
 }
 
-.caja-diferencia {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
-}
+.btn-modal-confirm { background-color: var(--primary); color: #ffffff; }
+.btn-modal-danger { background-color: var(--danger); color: #ffffff; }
+.btn-modal-cancel { background-color: #f1e5d1; color: #5c3a21; }
 
-.alerta-roja {
-  background: red;
-  color: white;
-  padding: 5px 15px;
-  font-weight: bold;
+/* Responsive para dispositivos móviles y tablets */
+@media screen and (max-width: 768px) {
+  body { padding: 8px; }
+  .container-main, #app-content { padding: 12px; }
+  .grid-vendedores { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  table { display: block; width: 100%; overflow-x: auto; white-space: nowrap; }
+  input[type="number"], input[type="text"], input[type="date"], select { font-size: 16px; padding: 10px; width: 100%; box-sizing: border-box; }
 }
-
-/* ==========================================
-   4. ESTILOS DE ARQUEO
-   ========================================== */
-.arqueo-container {
-  padding: 20px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.arqueo-header {
-  text-align: center;
+/* Hacer que la caja de botones sea fija (sticky) en la parte superior al deslizar */
+.caja-botones {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: var(--card-bg);
+  padding: 12px 15px;
   margin-bottom: 20px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 6px 15px -3px rgba(165, 93, 34, 0.15);
+  border: 1px solid var(--border-color);
+  border-top: none;
 }
-
-.resumen-cards {
-  display: flex;
-  gap: 15px;
-  justify-content: space-between;
+/* Espaciado generoso para la grilla de vendedores */
+.grid-vendedores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 18px; /* Separación horizontal y vertical entre botones */
   margin-bottom: 25px;
 }
 
-.card {
-  flex: 1;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 15px;
-  text-align: center;
-  border: 1px solid #dee2e6;
+/* Contenedor específico para separar los botones principales */
+.seccion-acciones-principales {
+  margin-top: 30px;
+  padding-top: 25px;
+  border-top: 2px dashed var(--border-color); /* Línea divisoria elegante */
 }
 
-.card h3 {
-  margin: 0 0 10px 0;
-  font-size: 0.9rem;
-  color: #495057;
+/* Grilla para los botones de módulos inferiores */
+.grid-acciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 18px;
 }
-
-.card p {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.card-diferencia-box {
-  color: #ffffff;
-}
-
-.layout-arqueo {
+/* Contenedor flexible que permite que los botones fluyan de forma natural */
+.vendedores-grid, .acciones-grid {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 0; /* Sin espacios automáticos generales */
 }
 
-.seccion-vendedores { flex: 2; }
-.seccion-billetes-consolidado { flex: 1; }
-
-.tabla-arqueo, .tabla-dinero {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
+/* Pequeño espacio exacto solo a la derecha y abajo de cada botón */
+.btn-circulo, .btn-vendedor, .btn-accion {
+  margin-right: 8px;   /* Espacio a la derecha */
+  margin-bottom: 8px;  /* Espacio abajo */
 }
-
-.tabla-arqueo th, .tabla-arqueo td,
-.tabla-dinero th, .tabla-dinero td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: center;
-}
-
-.texto-verde { color: #28a745; font-weight: bold; }
-.texto-rojo { color: #dc3545; font-weight: bold; }
-.texto-naranja { color: #fd7e14; font-weight: bold; }
-
-.acciones-arqueo {
-  margin-top: 25px;
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.btn-volver { background-color: #6c757d; color: white; 
-padding:10px 18px;
-font-size:14px;
-border-radius:6px;
-margin-right:5px;
-cursor: pointer;
-  } 
-.btn-excel { background-color: #28a745; color: white;
-padding:10px 18px;
-font-size:14px;
-border-radius:6px;
-margin-right:5px;
-cursor: pointer; }
-
-.filtro-fechas {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
-  background-color: #e9ecef;
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.filtro-fechas input[type="date"] {
-  padding: 5px 10px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 0.9rem;
-}
-
-.btn-hoy {
-  background-color: #17a2b8;
+/* Estilo unificado para todos los botones del sistema */
+button, .btn {
+  background-color: #f59e0b;
   color: white;
-  padding: 6px 12px;
+  font-weight: 700;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
+  padding: 10px 18px;
   cursor: pointer;
-  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.25);
+  transition: all 0.2s ease;
 }
 
-/* ==========================================
-   5. MEDIA QUERIES (DESKTOP Y PANTALLAS GRANDES)
-   ========================================== */
-@media (min-width: 768px) {
-  .dashboard-container {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+button:hover, .btn:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
 
-  .vendedores-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  .acciones-grid {
-    flex-direction: column;
-  }
-
-  .btn-circulo {
-    width: 120px;
-    height: 65px;
-    font-size: 0.9rem;
-  }
+button:active, .btn:active {
+  transform: translateY(1px);
+}
+.barra-flotante {
+  position: sticky;
+  top: 10px; /* Se queda pegado a 10px del borde superior al hacer scroll */
+  z-index: 100; /* Asegura que flote por encima de las tablas y no se quede atrás */
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }

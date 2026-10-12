@@ -1,41 +1,28 @@
-<div class="arqueo-container">
+<div class="pedido-container">
   
-  <div class="arqueo-header">
+  <div class="vendedor-header">
     <h2>CONSOLIDADO DE PEDIDOS Y PRODUCCIÓN</h2>
-    
-    <!-- Filtro de fechas -->
-    <div class="filtro-fechas">
-      <label for="fecha-inicio-pedido">Desde:</label>
-      <input type="date" id="fecha-inicio-pedido" onchange="procesarResumenPedidos()">
-      
-      <label for="fecha-fin-pedido">Hasta:</label>
-      <input type="date" id="fecha-fin-pedido" onchange="procesarResumenPedidos()">
-      
-      <button class="btn-accion btn-hoy" onclick="cargarHoyPedidos()">VER HOY</button>
+  </div>
+
+  <!-- Filtro de Fechas y Botones Superiores Unificados -->
+  <div class="card barra-flotante" style="padding: 15px; margin-bottom: 20px; background: #fff; border-radius: 8px; border: 1px solid #cbd5e1;">
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <label for="fecha-desde" style="font-weight: 600; font-size: 0.9rem;">Desde:</label>
+        <input type="date" id="fecha-desde" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+        
+        <label for="fecha-hasta" style="font-weight: 600; font-size: 0.9rem;">Hasta:</label>
+        <input type="date" id="fecha-hasta" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px;" />
+        
+        <button type="button" class="btn" onclick="cargarConsolidado()" style="padding: 7px 14px; font-size: 0.9rem;">Consultar</button>
+        <button type="button" class="btn" onclick="cargarConsolidadoHoy()" style="padding: 7px 14px; font-size: 0.9rem; color: white;">VER HOY</button>
+        <button type="button" class="btn btn-inicio" onclick="volverInicio()" style="padding: 7px 14px; font-size: 0.9rem;">VOLVER AL MENÚ</button>
     </div>
   </div>
 
-  <!-- Tarjetas de Resumen -->
-  <div class="resumen-cards">
-    <div class="card card-total-pan">
-      <h3>TOTAL PIEZAS (PAN)</h3>
-      <p id="card-total-piezas">0</p>
-    </div>
-    <div class="card card-total-efectivo">
-      <h3>TOTAL SARTENES / LATAS</h3>
-      <p id="card-total-sartenes">0</p>
-    </div>
-  </div>
-
- <!-- Tablas de producción -->
-<div class="layout-arqueo" style="display: flex; flex-direction: column; gap: 20px;">
-  
-  <!-- TABLA 1: CONSOLIDADO PARA HORNO (Agrupado por Masa/Sartén) -->
-  <div class="seccion-vendedores">
-    <h3 style="color: #d9534f; border-bottom: 2px solid #d9534f; padding-bottom: 5px;">
-      🔥 Consolidado para Horno (Sartenes Agrupados)
-    </h3>
-    <table class="tabla-arqueo" id="tabla-consolidado-horno">
+  <!-- SECCIÓN 1: Consolidado para Horno -->
+  <div class="card" style="padding: 15px; margin-bottom: 20px; background: #fff; border-radius: 8px; border: 1px solid #cbd5e1;">
+    <h3 style="margin-top: 0; color: #b91c1c; font-size: 1.1rem; border-bottom: 2px solid #ef4444; padding-bottom: 8px;">🔥 Consolidado para Horno (Sartenes Agrupados)</h3>
+    <table class="tabla-productos" style="width: 100%; margin-top: 10px;">
       <thead>
         <tr>
           <th>GRUPO / PRODUCTO</th>
@@ -44,18 +31,16 @@
           <th>SARTENES / LATAS</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Carga dinámica -->
+      <tbody id="tbody-consolidado-horno">
+        <tr><td colspan="4" style="text-align:center;">Seleccione una fecha para ver el consolidado.</td></tr>
       </tbody>
     </table>
   </div>
 
-  <!-- TABLA 2: DETALLE INDIVIDUAL (Para Administración y Control) -->
-  <div class="seccion-vendedores">
-    <h3 style="color: #0275d8; border-bottom: 2px solid #0275d8; padding-bottom: 5px;">
-      📋 Detalle Individual por Producto (Control Admin)
-    </h3>
-    <table class="tabla-arqueo" id="tabla-resumen-produccion">
+  <!-- SECCIÓN 2: Detalle Individual -->
+  <div class="card" style="padding: 15px; margin-bottom: 20px; background: #fff; border-radius: 8px; border: 1px solid #cbd5e1;">
+    <h3 style="margin-top: 0; color: #1e293b; font-size: 1.1rem; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">📋 Detalle Individual por Producto (Control Admin)</h3>
+    <table class="tabla-productos" style="width: 100%; margin-top: 10px;">
       <thead>
         <tr>
           <th>PRODUCTO</th>
@@ -63,17 +48,10 @@
           <th>OBSERVACIÓN CÁLCULO</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Carga dinámica -->
+      <tbody id="tbody-detalle-individual">
+        <tr><td colspan="3" style="text-align:center;">Seleccione una fecha para ver el detalle.</td></tr>
       </tbody>
     </table>
-  </div>
-
-</div>
-
-  <!-- Botón volver -->
-  <div class="acciones-arqueo">
-    <button class="btn-accion btn-volver" onclick="volverInicio()">VOLVER AL MENÚ</button>
   </div>
 
 </div>

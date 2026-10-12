@@ -1,0 +1,61 @@
+<div class="pedido-container">
+  
+  <div class="vendedor-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+    <h2>REGISTRO DE GASTOS</h2>
+    <button class="btn-circulo btn-inicio" onclick="volverInicio()" style="width: auto; padding: 10px 20px;">INICIO</button>
+  </div>
+
+  <div class="layout-pedido" style="grid-template-columns: 1fr;">
+    
+    <!-- Formulario para Nuevo Gasto -->
+    <div class="card" style="padding: 20px; background: #fff; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+      <h3 style="margin-top: 0; color: #3b2314; font-size: 1.2rem;">Nuevo Gasto</h3>
+      
+      <form id="form-gasto" onsubmit="guardarGasto(event)" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+        <div>
+          <label for="concepto-gasto" style="display: block; font-weight: 600; margin-bottom: 5px; color: #5c3a21;">Categoría / Concepto:</label>
+          <select id="concepto-gasto" required style="width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; background: #fff; color: #1e293b;">
+            <option value="" disabled selected>Seleccione una categoría...</option>
+            <option value="Insumos">Insumos</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Servicios Básicos">Servicios Básicos</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="monto-gasto" style="display: block; font-weight: 600; margin-bottom: 5px; color: #5c3a21;">Monto (C$):</label>
+          <input type="number" step="0.01" min="0" id="monto-gasto" required placeholder="0.00" style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem;" />
+        </div>
+
+        <div>
+          <label for="observacion-gasto" style="display: block; font-weight: 600; margin-bottom: 5px; color: #5c3a21;">Observación / Detalle (Opcional):</label>
+          <input type="text" id="observacion-gasto" placeholder="Ej. Compra de 2 bolsas de hielo, repuesto batidora..." style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem;" />
+        </div>
+
+        <button type="submit" class="btn-modal btn-modal-confirm" style="padding: 14px; font-size: 1rem; width: 100%; margin-top: 10px;">Guardar Gasto</button>
+      </form>
+    </div>
+
+    <!-- Tabla de Gastos del Día -->
+    <div class="seccion-tabla" style="background: #fff; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+      <h3 style="margin-top: 0; color: #3b2314; font-size: 1.1rem;">Gastos Registrados Hoy</h3>
+      <table id="tabla-gastos-hoy" style="width: 100%; margin-top: 10px;">
+        <thead>
+          <tr>
+            <th>HORA</th>
+            <th>CONCEPTO</th>
+            <th>MONTO</th>
+            <th>OBSERVACIÓN</th>
+            <th>ACCIONES</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-gastos">
+          <tr><td colspan="5" style="text-align:center;">Cargando gastos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

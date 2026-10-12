@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="style.css">
 <div class="arqueo-container">
   
-  <div class="arqueo-header">
+  <div class="arqueo-header barra-flotante">
   <h2>ARQUEO GENERAL DE CAJA</h2>
   
   <!-- Controles de Filtro por Fecha -->
@@ -13,6 +13,10 @@
     <input type="date" id="fecha-fin" onchange="procesarArqueoGeneral()">
     
     <button class="btn-accion btn-hoy" onclick="cargarHoyArqueo()">VER HOY</button>
+     <button class="btn-accion btn-volver" onclick="volverInicio()">VOLVER AL MENÚ</button>
+    <button class="btn-accion btn-excel" onclick="exportarExcelArqueo()">EXPORTAR A EXCEL</button>
+
+
   </div>
 </div>
 
@@ -78,11 +82,7 @@
 
   </div>
 
-  <!-- Botones de Acción -->
-  <div class="acciones-arqueo">
-    <button class="btn-accion btn-volver" onclick="volverInicio()">VOLVER AL MENÚ</button>
-    <button class="btn-accion btn-excel" onclick="exportarExcelArqueo()">EXPORTAR A EXCEL</button>
-  </div>
+ 
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

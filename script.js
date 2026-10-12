@@ -6,176 +6,179 @@ const SUPABASE_ANON_KEY = 'sb_publishable_veZjv_oyTwnyIefPfTj_RA_otSyvmaV';
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Mapa de rendimientos por producto (Piezas por sartén / lata / bolsa)
-const RENDIMIENTO_PRODUCTOS = {
-  "BARRITA": 4,
-  "BARRITA DOBLE": 4,
-  "HAMBURGUESA PEQUEÑA": 5,
-  "HAMBURGUESA PEQUEÑA DOBLE": 5,
-  "HAMBURGUESA MEDIANA": 5,
-  "HAMBURGUESA MEDIANA DOBLE": 5,
-  "BOLLONCITO": 5,
-  "BOLLONCITO DOBLE": 5,
-  "CONCHA": 4,
-  "CONCHA DOBLE": 4,
-  "TRENZA DOBLE": 4,
-  "BOLLON DE 4": 12,        // 12 piezas por sartén (3 paquetes de 4)
-  "BOLLON DE 4 DOBLE": 12,  
-  "BOLLON DE 5": 12,        // 12 piezas por sartén
-  "PICOS": 3,
-  "PICOS DOBLE": 3,
-  "MANJAR": 4,
-  "MANJAR DOBLE": 2,
-  "TOSTADO": 48,            // 48 piezas por lata
-  "TOSTADO DOBLE": 48,
-  "ROSCA": 48,              // 48 piezas por lata
-  "ROSCA DOBLE": 48,
-  "EMPANADA": 48,           // 48 piezas por lata
-  "EMPANADA DOBLE": 48,
-  "PIQUITO DOBLE": 48,       // 48 piezas por lata
-  "POLVORON DOBLE": 1,      // Unidad base
-  "HOT-DOG": 6,             // 6 piezas por sartén
-  "HAMBURGUESA DE ARO": 6,  // 6 piezas por sartén
-  "CONCHA INDIVIDUAL": 6,   // 6 piezas por sartén
-  "BARRA CUADRADA": 6,      // 6 piezas por sartén
-  "MOLDE": 1,                // Molde individual
-  "BARRA DE MANTEQUILLA":1, // Unidad base
-  "CACHO CON MANTEQUILLA":1, // Unidad base
-  "ENROLLADO DOBLE": 2.5  // 2.5 piezas por sartén (cada sartén produce 2.5 enrollados dobles)
-};
-
-// ==========================================
-// LISTA DE PRECIOS AL DETALLE / VENTA LOCAL
-// ==========================================
-const PRECIOS_VENTA_LOCAL = {
-  "BARRITA": 10,
-  "BARRITA DOBLE": 20,
-  "HAMBURGUESA PEQUEÑA": 10,
-  "HAMBURGUESA PEQUEÑA DOBLE": 20,
-  "HAMBURGUESA MEDIANA": 10,
-  "HAMBURGUESA MEDIANA DOBLE": 20,
-  "BOLLONCITO": 10,
-  "BOLLONCITO DOBLE": 20,
-  "CONCHA": 10,
-  "CONCHA DOBLE": 20,
-  "TRENZA DOBLE": 20,
-  "BOLLON DE 4": 30,
-  "BOLLON DE 4 DOBLE": 60,
-  "BOLLON DE 5": 35,
-  "PICOS": 10,
-  "PICOS DOBLE": 20,
-  "MANJAR": 10,
-  "MANJAR DOBLE": 20,
-  "TOSTADO": 10,
-  "TOSTADO DOBLE": 20,
-  "ROSCA": 10,
-  "ROSCA DOBLE": 20,
-  "EMPANADA": 10,
-  "EMPANADA DOBLE": 20,
-  "PIQUITO DOBLE": 20,
-  "POLVORON DOBLE": 20,
-  "HOT-DOG": 15,
-  "HAMBURGUESA DE ARO": 15,
-  "CONCHA INDIVIDUAL": 15,
-  "BARRA CUADRADA": 15,
-  "MOLDE": 30,
-  "BARRA DE MANTEQUILLA": 20,
-  "CACHO CON MANTEQUILLA": 20,
-  "ENROLLADO DOBLE": 20
-};
-
-// Función auxiliar para calcular sartenes/latas redondeado hacia arriba
-function calcularSartenes(nombreProducto, cantidadTotal) {
-  const capacidad = RENDIMIENTO_PRODUCTOS[nombreProducto] || 1;
-  return {
-    capacidad,
-    sartenes: Math.ceil(cantidadTotal / capacidad)
-  };
-}
-
-// Función auxiliar para formatear Fecha y Hora
-function formatearFechaHora(isoString) {
-  if (!isoString) return 'N/A';
-  const fecha = new Date(isoString);
-  return fecha.toLocaleString('es-NI', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  });
-}
-
 let vistaMenuPrincipal = '';
-let pedidoIdActual = null; // Mantiene el ID si se edita un pedido existente
+let pedidoIdActual = null; 
 
-// Guardar el estado inicial del menú al cargar la página
+// Inicialización al cargar la página
 window.addEventListener('DOMContentLoaded', () => {
   const content = document.getElementById('app-content');
   if (content) {
     vistaMenuPrincipal = content.innerHTML;
   }
+  crearEstructuraModal();
+  cargarEstadosVendedoresHoy();
+  console.log("Interfaz de La Confianza S.A. optimizada y lista.");
 });
 
-// NAVEGACIÓN PRINCIPAL
-function abrirArqueoGeneral() {
-  window.location.href = 'arqueo_general.html';
+// ==========================================
+// SISTEMA DE DIÁLOGOS Y MODALES ELEGANTES
+// ==========================================
+
+function crearEstructuraModal() {
+  if (document.getElementById('custom-modal')) return;
+
+  const modalHTML = `
+    <div id="custom-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div id="modal-title" class="modal-title">Confirmación</div>
+        <div id="modal-body" class="modal-body">¿Está seguro de realizar esta acción?</div>
+        <div class="modal-actions">
+          <button id="modal-btn-cancel" class="btn-modal btn-modal-cancel">Cancelar</button>
+          <button id="modal-btn-confirm" class="btn-modal btn-modal-confirm">Aceptar</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
 }
+
+function mostrarConfirmacionModal({ titulo, mensaje, tipo = 'primary', textoConfirmar = 'Aceptar' }) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('custom-modal');
+    const elTitulo = document.getElementById('modal-title');
+    const elMensaje = document.getElementById('modal-body');
+    const btnConfirm = document.getElementById('modal-btn-confirm');
+    const btnCancel = document.getElementById('modal-btn-cancel');
+
+    elTitulo.innerText = titulo;
+    elMensaje.innerText = mensaje;
+    btnConfirm.innerText = textoConfirmar;
+
+    btnConfirm.className = 'btn-modal ' + (tipo === 'danger' ? 'btn-modal-danger' : 'btn-modal-confirm');
+    modal.classList.add('active');
+
+    const handleConfirm = () => {
+      cerrarModal();
+      cleanup();
+      resolve(true);
+    };
+
+    const handleCancel = () => {
+      cerrarModal();
+      cleanup();
+      resolve(false);
+    };
+
+    const cleanup = () => {
+      btnConfirm.removeEventListener('click', handleConfirm);
+      btnCancel.removeEventListener('click', handleCancel);
+    };
+
+    btnConfirm.addEventListener('click', handleConfirm);
+    btnCancel.addEventListener('click', handleCancel);
+  });
+}
+
+function cerrarModal() {
+  const modal = document.getElementById('custom-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+// ==========================================
+// COLORES Y ESTADOS DE VENDEDORES EN INDEX
+// ==========================================
+
+function actualizarColorVendedorVisual(nombreVendedor, estado) {
+  const botones = document.querySelectorAll('.btn-vendedor, .btn-circulo');
+  
+  botones.forEach(boton => {
+    const textoBoton = boton.textContent.trim().toUpperCase();
+    const vendedorBuscado = nombreVendedor.trim().toUpperCase();
+
+    if (textoBoton === vendedorBuscado) {
+      boton.classList.remove('guardado', 'liquidado');
+      const estadoLower = String(estado).toLowerCase();
+
+      if (estadoLower.includes('guardado') || estadoLower.includes('pedido') || estadoLower.includes('despachado')) {
+        boton.classList.add('guardado'); 
+      } else if (estadoLower.includes('liquidado')) {
+        boton.classList.add('liquidado'); 
+      }
+    }
+  });
+}
+
+async function cargarEstadosVendedoresHoy() {
+  try {
+    if (typeof supabaseClient === 'undefined') return;
+
+    const hoy = new Date().toISOString().split('T')[0];
+
+    const { data, error } = await supabaseClient
+      .from('pedidos')
+      .select('vendedor, estado, total_monto')
+      .gte('created_at', `${hoy}T00:00:00`)
+      .lte('created_at', `${hoy}T23:59:59`);
+
+    if (error) return;
+
+    if (data) {
+      data.forEach(registro => {
+        if (registro.vendedor && registro.estado && registro.total_monto > 0) {
+          actualizarColorVendedorVisual(registro.vendedor, registro.estado);
+        }
+      });
+    }
+  } catch (err) {
+    console.error('Error cargando estados:', err);
+  }
+}
+
+// ==========================================
+// NAVEGACIÓN
+// ==========================================
 
 function volverInicio() {
   const appContent = document.getElementById('app-content');
   if (appContent && vistaMenuPrincipal) {
     appContent.innerHTML = vistaMenuPrincipal;
+    cargarEstadosVendedoresHoy();
   } else {
     window.location.href = 'index.html';
   }
 }
 
-// Cargar pantalla de pedido e inyectar vendedor
 function abrirPedido(vendedor) {
-  pedidoIdActual = null; // Reiniciar estado de ID
+  pedidoIdActual = null; 
   fetch('formulario_pedido.html')
-    .then(response => {
-      if (!response.ok) throw new Error('Error al cargar la plantilla de pedido');
-      return response.text();
-    })
+    .then(response => response.text())
     .then(html => {
       document.getElementById('app-content').innerHTML = html;
       const elVendedor = document.getElementById('nombre-vendedor');
       if (elVendedor) elVendedor.innerText = vendedor;
-
-      // Si el vendedor es VENTA LOCAL, ajustar precios al detalle en la tabla
-      if (vendedor === 'VENTA LOCAL') {
-        const filas = document.querySelectorAll('#tabla-productos tbody tr');
-        filas.forEach(fila => {
-          const nombreProd = fila.cells[0].innerText.trim();
-          const elPrecio = fila.querySelector('.precio');
-          if (elPrecio && PRECIOS_VENTA_LOCAL[nombreProd] !== undefined) {
-            elPrecio.innerText = `C$${PRECIOS_VENTA_LOCAL[nombreProd].toFixed(2)}`;
-          }
-        });
-      }
-
-      // Buscar si el vendedor ya tiene un borrador guardado hoy
       cargarPedidoExistente(vendedor);
     })
     .catch(error => console.error('Error:', error));
 }
 
-// Cálculo en tiempo real de Pan, Dinero y Diferencia
+// ==========================================
+// CÁLCULOS Y BÚSQUEDA DE PEDIDO POR FECHA
+// ==========================================
+
+// ==========================================
+// CÁLCULOS DEL FORMULARIO (SIN COLUMNA PRECIO)
+// ==========================================
+
 function calcularPedido() {
   let sumaUnidades = 0;
   let sumaMontoPedido = 0;
   let sumaEfectivo = 0;
 
-  // 1. Recorrer la tabla de productos
+  // 1. Cálculo de productos
   const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
   filasProductos.forEach(fila => {
-    const elPrecio = fila.querySelector('.precio');
+    const precio = parseFloat(fila.getAttribute('data-precio')) || 0;
     const inputCant = fila.querySelector('.cant-prod');
-    
-    const precio = parseFloat(elPrecio ? elPrecio.innerText.replace('C$', '') : 0) || 0;
     const cantidad = parseInt(inputCant ? inputCant.value : 0) || 0;
     
     const subtotal = precio * cantidad;
@@ -191,48 +194,55 @@ function calcularPedido() {
   if (elTotalUnidades) elTotalUnidades.innerText = sumaUnidades;
   if (elTotalMonto) elTotalMonto.innerText = `C$${sumaMontoPedido.toFixed(2)}`;
 
-  // 2. Recorrer desglose de dinero
-  const inputsDinero = document.querySelectorAll('#tabla-dinero input');
-  inputsDinero.forEach(input => {
+  // 2. Cálculo de dinero y subtotales por fila
+  const filasDinero = document.querySelectorAll('#tabla-dinero tbody tr');
+  filasDinero.forEach(fila => {
+    const input = fila.querySelector('input');
+    if (!input) return;
+
     const denominacion = parseFloat(input.getAttribute('data-denom')) || 0;
     const cantidadBilletes = parseInt(input.value) || 0;
-    sumaEfectivo += denominacion * cantidadBilletes;
+    const subtotalFila = denominacion * cantidadBilletes;
+    
+    sumaEfectivo += subtotalFila;
+
+    // Actualizar el subtotal a la par de la denominación
+    const elSubtotalFila = fila.querySelector('.subtotal-dinero');
+    if (elSubtotalFila) {
+      elSubtotalFila.innerText = `C$${subtotalFila.toFixed(2)}`;
+    }
   });
 
   const elTotalEfectivo = document.getElementById('total-efectivo');
   if (elTotalEfectivo) elTotalEfectivo.innerText = `C$${sumaEfectivo.toFixed(2)}`;
 
-  // 3. Evaluar Diferencia / Saldo
+  // 3. Cálculo de diferencia
   const diferencia = sumaEfectivo - sumaMontoPedido;
   const boxDiferencia = document.getElementById('box-diferencia');
   
   if (boxDiferencia) {
     boxDiferencia.innerText = `C$${diferencia.toFixed(2)}`;
     if (diferencia === 0) {
-      boxDiferencia.style.backgroundColor = '#28a745'; // Verde: Cabal
+      boxDiferencia.style.backgroundColor = '#efca6c'; 
     } else if (diferencia < 0) {
-      boxDiferencia.style.backgroundColor = '#dc3545'; // Rojo: Falta/Deuda
+      boxDiferencia.style.backgroundColor = '#a55d22'; 
     } else {
-      boxDiferencia.style.backgroundColor = '#fd7e14'; // Naranja: Sobrante
+      boxDiferencia.style.backgroundColor = '#faa200'; 
     }
   }
 }
 
-// Extraer objeto estructurado del formulario
 function obtenerPayloadFormulario(estadoAccion = 'GUARDADO') {
   const elVendedor = document.getElementById('nombre-vendedor');
   const vendedor = elVendedor ? elVendedor.innerText : '';
   const productos = [];
   const desgloseEfectivo = {};
 
-  // Extraer únicamente productos con cantidad > 0
   const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
   filasProductos.forEach(fila => {
     const nombre = fila.cells[0].innerText.trim();
-    const elPrecio = fila.querySelector('.precio');
+    const precio = parseFloat(fila.getAttribute('data-precio')) || 0;
     const inputCant = fila.querySelector('.cant-prod');
-    
-    const precio = parseFloat(elPrecio ? elPrecio.innerText.replace('C$', '') : 0) || 0;
     const cantidad = parseInt(inputCant ? inputCant.value : 0) || 0;
     
     if (cantidad > 0) {
@@ -240,7 +250,6 @@ function obtenerPayloadFormulario(estadoAccion = 'GUARDADO') {
     }
   });
 
-  // Extraer denominaciones de billetes/monedas
   const inputsDinero = document.querySelectorAll('#tabla-dinero input');
   inputsDinero.forEach(input => {
     const denom = input.getAttribute('data-denom');
@@ -265,9 +274,144 @@ function obtenerPayloadFormulario(estadoAccion = 'GUARDADO') {
   };
 }
 
-// Guardar o Actualizar el borrador del pedido en Supabase
-async function guardarPedido(datosPedido) {
-  const payload = datosPedido || obtenerPayloadFormulario('GUARDADO');
+// ==========================================
+// FUNCIÓN BORRAR CON MENSAJE DE CONFIRMACIÓN OBLIGATORIO
+// ==========================================
+
+async function borrarPedido() {
+  const elVendedor = document.getElementById('nombre-vendedor')?.innerText || 'este vendedor';
+
+  // Mostrar el modal elegante preguntando si está seguro
+  const confirmado = await mostrarConfirmacionModal({
+    titulo: '🗑️ ¿Está seguro que quiere borrar?',
+    mensaje: `¿Está seguro que desea borrar el pedido y limpiar los datos de ${elVendedor}? Si existe un registro guardado, también se eliminará de la base de datos.`,
+    tipo: 'danger',
+    textoConfirmar: 'Sí, Borrar'
+  });
+
+  if (!confirmado) return;
+
+  try {
+    if (pedidoIdActual) {
+      const { error } = await supabaseClient
+        .from('pedidos')
+        .delete()
+        .eq('id', pedidoIdActual);
+
+      if (error) throw error;
+      pedidoIdActual = null;
+    }
+
+    limpiarFormulario();
+
+    await mostrarConfirmacionModal({
+      titulo: '✅ Pedido Borrado',
+      mensaje: 'Los datos se han borrado y limpiado correctamente.',
+      textoConfirmar: 'Aceptar'
+    });
+  } catch (err) {
+    console.error('Error al borrar:', err);
+    await mostrarConfirmacionModal({
+      titulo: '❌ Error',
+      mensaje: 'Ocurrió un error al intentar eliminar el registro de Supabase.',
+      tipo: 'danger',
+      textoConfirmar: 'Aceptar'
+    });
+  }
+}
+
+
+
+async function consultarPedidoPorFecha() {
+  const elVendedor = document.getElementById('nombre-vendedor');
+  const vendedor = elVendedor ? elVendedor.innerText : '';
+  const inputFecha = document.getElementById('fecha-historial');
+  const contenedorDetalle = document.getElementById('detalle-historial');
+
+  if (!inputFecha || !inputFecha.value) return;
+
+  const fechaSeleccionada = inputFecha.value;
+
+  try {
+    contenedorDetalle.innerHTML = "Buscando registro...";
+
+    const { data, error } = await supabaseClient
+      .from('pedidos')
+      .select('*')
+      .eq('vendedor', vendedor)
+      .gte('created_at', `${fechaSeleccionada}T00:00:00`)
+      .lte('created_at', `${fechaSeleccionada}T23:59:59`)
+      .order('id', { ascending: false })
+      .limit(1);
+
+    if (error) throw error;
+
+    const pedidosValidos = data ? data.filter(p => p.productos && p.productos.length > 0) : [];
+
+    if (pedidosValidos.length > 0) {
+      const registro = pedidosValidos[0];
+      pedidoIdActual = registro.id;
+
+      const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+      filasProductos.forEach(fila => {
+        const nombre = fila.cells[0].innerText.trim();
+        const prodGuardado = registro.productos.find(p => p.producto === nombre);
+        const inputCant = fila.querySelector('.cant-prod');
+        if (inputCant) {
+          inputCant.value = prodGuardado ? prodGuardado.cantidad : 0;
+        }
+      });
+
+      if (registro.desglose_efectivo) {
+        const inputsDinero = document.querySelectorAll('#tabla-dinero input');
+        inputsDinero.forEach(input => {
+          const denom = input.getAttribute('data-denom');
+          input.value = registro.desglose_efectivo[denom] || '';
+        });
+      }
+
+      calcularPedido();
+      contenedorDetalle.innerHTML = `✅ Pedido cargado del día <strong>${fechaSeleccionada}</strong> (Estado: <strong>${registro.estado || 'GUARDADO'}</strong>).`;
+    } else {
+      pedidoIdActual = null;
+      limpiarFormulario();
+      contenedorDetalle.innerHTML = `ℹ️ No hay registros con productos guardados para <strong>${vendedor}</strong> el día <strong>${fechaSeleccionada}</strong>.`;
+    }
+  } catch (err) {
+    console.error('Error al consultar por fecha:', err);
+  }
+}
+
+async function cargarPedidoExistente(vendedor) {
+  const hoy = new Date().toISOString().split('T')[0];
+  const inputFecha = document.getElementById('fecha-historial');
+  if (inputFecha) inputFecha.value = hoy;
+  consultarPedidoPorFecha();
+}
+
+// ==========================================
+// GUARDAR, LIQUIDAR Y BORRAR CON CONFIRMACIÓN
+// ==========================================
+
+async function guardarPedido() {
+  const payload = obtenerPayloadFormulario('GUARDADO');
+
+  if (!payload.productos || payload.productos.length === 0) {
+    await mostrarConfirmacionModal({
+      titulo: '⚠️ Pedido Vacío',
+      mensaje: 'Por favor ingrese al menos una cantidad de producto antes de guardar.',
+      textoConfirmar: 'Entendido'
+    });
+    return;
+  }
+
+  const confirmado = await mostrarConfirmacionModal({
+    titulo: '💾 Guardar Pedido',
+    mensaje: `¿Está seguro de guardar los cambios para el pedido de ${payload.vendedor}?`,
+    textoConfirmar: 'Sí, Guardar'
+  });
+
+  if (!confirmado) return;
 
   try {
     let respuesta;
@@ -290,17 +434,29 @@ async function guardarPedido(datosPedido) {
       pedidoIdActual = respuesta.data[0].id;
     }
 
-    console.log('Pedido guardado correctamente:', respuesta.data);
-    alert('💾 Pedido borrador guardado con éxito.');
+    actualizarColorVendedorVisual(payload.vendedor, 'guardado');
+
+    await mostrarConfirmacionModal({
+      titulo: '✅ ¡Guardado Exitoso!',
+      mensaje: 'El pedido se ha modificado correctamente en el sistema.',
+      textoConfirmar: 'Aceptar'
+    });
   } catch (error) {
-    console.error('Error al guardar pedido:', error);
-    alert('❌ Ocurrió un error al registrar el borrador.');
+    console.error('Error al guardar:', error);
   }
 }
 
-// Liquidar pedido (Cierre con entrega de dinero)
 async function liquidarPedido() {
   const payload = obtenerPayloadFormulario('LIQUIDADO');
+
+  const confirmado = await mostrarConfirmacionModal({
+    titulo: '🏁 Liquidar Saldo Pendiente',
+    mensaje: `¿Está seguro que desea marcar este saldo como LIQUIDADO para ${payload.vendedor}?`,
+    tipo: 'primary',
+    textoConfirmar: 'Sí, Liquidar'
+  });
+
+  if (!confirmado) return;
 
   try {
     let respuesta;
@@ -308,257 +464,64 @@ async function liquidarPedido() {
       respuesta = await supabaseClient
         .from('pedidos')
         .update(payload)
-        .eq('id', pedidoIdActual);
+        .eq('id', pedidoIdActual)
+        .select();
     } else {
       respuesta = await supabaseClient
         .from('pedidos')
-        .insert([payload]);
+        .insert([payload])
+        .select();
     }
 
     if (respuesta.error) throw respuesta.error;
-    alert('🏁 Pedido liquidado correctamente.');
+
+    actualizarColorVendedorVisual(payload.vendedor, 'liquidado');
+
+    await mostrarConfirmacionModal({
+      titulo: '🏁 Saldo Liquidado',
+      mensaje: 'La cuenta ha sido cerrada correctamente.',
+      textoConfirmar: 'Aceptar'
+    });
   } catch (error) {
     console.error('Error al liquidar:', error);
-    alert('❌ Ocurrió un error al liquidar el pedido.');
   }
 }
 
-// Cargar datos previos si el vendedor ya tenía un registro en el día
-async function cargarPedidoExistente(vendedor) {
-  try {
-    const inicioHoy = new Date();
-    inicioHoy.setHours(0, 0, 0, 0);
 
-    const { data, error } = await supabaseClient
-      .from('pedidos')
-      .select('*')
-      .eq('vendedor', vendedor)
-      .gte('created_at', inicioHoy.toISOString())
-      .order('created_at', { ascending: false })
-      .limit(1);
 
-    if (error) throw error;
-
-    if (data && data.length > 0) {
-      const registro = data[0];
-      pedidoIdActual = registro.id;
-
-      // Cargar cantidades guardadas de productos
-      const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
-      filasProductos.forEach(fila => {
-        const nombre = fila.cells[0].innerText.trim();
-        const prodGuardado = registro.productos.find(p => p.producto === nombre);
-        const inputCant = fila.querySelector('.cant-prod');
-        if (prodGuardado && inputCant) {
-          inputCant.value = prodGuardado.cantidad;
-        }
-      });
-
-      // Cargar desglose de efectivo si existe
-      if (registro.desglose_efectivo) {
-        const inputsDinero = document.querySelectorAll('#tabla-dinero input');
-        inputsDinero.forEach(input => {
-          const denom = input.getAttribute('data-denom');
-          if (registro.desglose_efectivo[denom] !== undefined) {
-            input.value = registro.desglose_efectivo[denom];
-          }
-        });
-      }
-
-      calcularPedido();
-    }
-  } catch (err) {
-    console.warn('Sin pedidos previos registrados hoy para este vendedor:', err);
-  }
-}
-
-// Limpiar formulario
 function limpiarFormulario() {
   const todosInputs = document.querySelectorAll('input[type="number"]');
   todosInputs.forEach(input => input.value = '');
-  pedidoIdActual = null;
   calcularPedido();
 }
 
-// Helper para fechas por defecto en Arqueo
-function establecerFechasPorDefecto() {
-  const hoy = new Date().toISOString().split('T')[0];
-  const inputInicio = document.getElementById('fecha-inicio');
-  const inputFin = document.getElementById('fecha-fin');
-
-  if (inputInicio && !inputInicio.value) inputInicio.value = hoy;
-  if (inputFin && !inputFin.value) inputFin.value = hoy;
-}
-
-function cargarHoyArqueo() {
-  const hoy = new Date().toISOString().split('T')[0];
-  const inputInicio = document.getElementById('fecha-inicio');
-  const inputFin = document.getElementById('fecha-fin');
-  if (inputInicio) inputInicio.value = hoy;
-  if (inputFin) inputFin.value = hoy;
-  procesarArqueoGeneral();
-}
-
-// Consultar Supabase con rango de fechas dinámico (Arqueo General + Gastos)
-async function procesarArqueoGeneral() {
-  try {
-    establecerFechasPorDefecto();
-
-    const fechaInicioVal = document.getElementById('fecha-inicio').value;
-    const fechaFinVal = document.getElementById('fecha-fin').value;
-
-    const inicio = new Date(`${fechaInicioVal}T00:00:00`);
-    const fin = new Date(`${fechaFinVal}T23:59:59.999`);
-
-    // 1. Consultar PEDIDOS
-    const { data: pedidos, error: errPedidos } = await supabaseClient
-      .from('pedidos')
-      .select('*')
-      .gte('created_at', inicio.toISOString())
-      .lte('created_at', fin.toISOString())
-      .order('created_at', { ascending: false });
-
-    if (errPedidos) throw errPedidos;
-
-    // 2. Consultar GASTOS
-    const { data: gastos, error: errGastos } = await supabaseClient
-      .from('gastos')
-      .select('*')
-      .gte('created_at', inicio.toISOString())
-      .lte('created_at', fin.toISOString())
-      .order('created_at', { ascending: false });
-
-    if (errGastos) throw errGastos;
-
-    let sumaTotalPan = 0;
-    let sumaTotalEfectivo = 0;
-    let sumaTotalGastos = 0;
-
-    const consolidadoBilletes = {
-      '36.5': 0, '1000': 0, '500': 0, '200': 0, '100': 0,
-      '50': 0, '20': 0, '10': 0, '5': 0, '1': 0, '0.5': 0
-    };
-
-    const tbodyVendedores = document.querySelector('#tabla-vendedores-arqueo tbody');
-    if (tbodyVendedores) tbodyVendedores.innerHTML = '';
-
-    if (!pedidos || pedidos.length === 0) {
-      if (tbodyVendedores) {
-        tbodyVendedores.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay registros en el rango de fechas seleccionado.</td></tr>';
-      }
-    } else {
-      pedidos.forEach(p => {
-        sumaTotalPan += parseFloat(p.total_monto) || 0;
-        sumaTotalEfectivo += parseFloat(p.total_efectivo) || 0;
-
-        if (p.desglose_efectivo) {
-          for (const denom in p.desglose_efectivo) {
-            if (consolidadoBilletes[denom] !== undefined) {
-              consolidadoBilletes[denom] += parseInt(p.desglose_efectivo[denom]) || 0;
-            }
-          }
-        }
-
-        const dif = parseFloat(p.diferencia) || 0;
-        let claseDif = dif === 0 ? 'texto-verde' : (dif < 0 ? 'texto-rojo' : 'texto-naranja');
-        const fechaHoraFormateada = formatearFechaHora(p.created_at);
-
-        if (tbodyVendedores) {
-          const fila = document.createElement('tr');
-          fila.innerHTML = `
-            <td><strong>${p.vendedor}</strong></td>
-            <td>${fechaHoraFormateada}</td>
-            <td>C$ ${parseFloat(p.total_monto || 0).toFixed(2)}</td>
-            <td>C$ ${parseFloat(p.total_efectivo || 0).toFixed(2)}</td>
-            <td class="${claseDif}">C$ ${dif.toFixed(2)}</td>
-            <td><span class="badge-estado ${p.estado ? p.estado.toLowerCase() : 'pendiente'}">${p.estado || 'PENDIENTE'}</span></td>
-          `;
-          tbodyVendedores.appendChild(fila);
-        }
-      });
-    }
-
-    // Sumar Total de Gastos
-    if (gastos && gastos.length > 0) {
-      gastos.forEach(g => {
-        sumaTotalGastos += parseFloat(g.monto) || 0;
-      });
-    }
-
-    // Actualizar Tarjetas Principales
-    const elCardPan = document.getElementById('card-total-pan');
-    const elCardEfectivo = document.getElementById('card-total-efectivo');
-    const elCardGastos = document.getElementById('card-total-gastos');
-
-    if (elCardPan) elCardPan.innerText = `C$${sumaTotalPan.toFixed(2)}`;
-    if (elCardEfectivo) elCardEfectivo.innerText = `C$${sumaTotalEfectivo.toFixed(2)}`;
-    if (elCardGastos) elCardGastos.innerText = `C$${sumaTotalGastos.toFixed(2)}`;
-
-    // La diferencia real toma en cuenta los gastos realizados
-    const diferenciaTotal = (sumaTotalEfectivo + sumaTotalGastos) - sumaTotalPan;
-    const cardDif = document.getElementById('card-diferencia');
-    const cardDifBox = document.getElementById('card-diferencia-box');
-
-    if (cardDif) cardDif.innerText = `C$${diferenciaTotal.toFixed(2)}`;
-    if (cardDifBox) {
-      if (diferenciaTotal === 0) {
-        cardDifBox.style.backgroundColor = '#28a745';
-      } else if (diferenciaTotal < 0) {
-        cardDifBox.style.backgroundColor = '#dc3545';
-      } else {
-        cardDifBox.style.backgroundColor = '#fd7e14';
-      }
-    }
-
-    // Actualizar Tabla Billetes Consolidados
-    const tbodyBilletes = document.querySelector('#tabla-consolidado-dinero tbody');
-    if (tbodyBilletes) {
-      tbodyBilletes.innerHTML = '';
-      const denomsOrdenadas = ['1000', '500', '200', '100', '50', '20', '10', '5', '1', '0.5', '36.5'];
-      denomsOrdenadas.forEach(denom => {
-        const cant = consolidadoBilletes[denom] || 0;
-        const subtotal = parseFloat(denom) * cant;
-
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-          <td><strong>C$${denom}</strong></td>
-          <td>${cant}</td>
-          <td>C$${subtotal.toFixed(2)}</td>
-        `;
-        tbodyBilletes.appendChild(fila);
-      });
-    }
-
-  } catch (err) {
-    console.error('Error procesando el arqueo general:', err);
-    alert('❌ Ocurrió un error al cargar los datos.');
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.tagName === 'INPUT') {
+    e.preventDefault();
   }
-}
-
-// Exportar vista a Excel (.csv)
-function exportarExcelArqueo() {
-  const tabla = document.getElementById('tabla-vendedores-arqueo');
-  if (!tabla) return;
-  let csv = [];
-  for (let i = 0; i < tabla.rows.length; i++) {
-    let row = [], cols = tabla.rows[i].querySelectorAll('td, th');
-    for (let j = 0; j < cols.length; j++) {
-      row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
-    }
-    csv.push(row.join(','));
-  }
-  const csvFile = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
-  const downloadLink = document.createElement('a');
-  downloadLink.download = `Arqueo_General_${new Date().toISOString().slice(0,10)}.csv`;
-  downloadLink.href = window.URL.createObjectURL(csvFile);
-  downloadLink.style.display = 'none';
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-}
+});
 
 // ==========================================
-// MÓDULO DE PEDIDO / RESUMEN DE PRODUCCIÓN
+// NAVEGACIÓN DE MÓDULOS PRINCIPALES
 // ==========================================
+
+function abrirArqueoGeneral() {
+  window.location.href = 'arqueo_general.html';
+}
+
+function abrirFormularioGasto() {
+  fetch('formulario_gasto.html')
+    .then(response => {
+      if (!response.ok) throw new Error('Error al cargar la plantilla de gastos');
+      return response.text();
+    })
+    .then(html => {
+      document.getElementById('app-content').innerHTML = html;
+    })
+    .catch(err => {
+      console.warn('Cargando vista de gastos alternativa...', err);
+    });
+}
 
 function abrirModulo(modulo) {
   if (modulo === 'PEDIDO') {
@@ -569,16 +532,22 @@ function abrirModulo(modulo) {
       })
       .then(html => {
         document.getElementById('app-content').innerHTML = html;
-        procesarResumenPedidos();
+        if (typeof procesarResumenPedidos === 'function') {
+          procesarResumenPedidos();
+        }
       })
       .catch(err => console.error('Error abriendo Resumen de Pedidos:', err));
   }
 }
 
+// ==========================================
+// MÓDULO DE RESUMEN DE PEDIDOS Y PRODUCCIÓN
+// ==========================================
+
 function establecerFechasPorDefectoPedidos() {
   const hoy = new Date().toISOString().split('T')[0];
-  const inputInicio = document.getElementById('fecha-inicio-pedido');
-  const inputFin = document.getElementById('fecha-fin-pedido');
+  const inputInicio = document.getElementById('fecha-desde') || document.getElementById('fecha-inicio-pedido');
+  const inputFin = document.getElementById('fecha-hasta') || document.getElementById('fecha-fin-pedido');
 
   if (inputInicio && !inputInicio.value) inputInicio.value = hoy;
   if (inputFin && !inputFin.value) inputFin.value = hoy;
@@ -586,8 +555,8 @@ function establecerFechasPorDefectoPedidos() {
 
 function cargarHoyPedidos() {
   const hoy = new Date().toISOString().split('T')[0];
-  const inputInicio = document.getElementById('fecha-inicio-pedido');
-  const inputFin = document.getElementById('fecha-fin-pedido');
+  const inputInicio = document.getElementById('fecha-desde') || document.getElementById('fecha-inicio-pedido');
+  const inputFin = document.getElementById('fecha-hasta') || document.getElementById('fecha-fin-pedido');
   if (inputInicio) inputInicio.value = hoy;
   if (inputFin) inputFin.value = hoy;
   procesarResumenPedidos();
@@ -597,21 +566,24 @@ async function procesarResumenPedidos() {
   try {
     establecerFechasPorDefectoPedidos();
 
-    const fechaInicioVal = document.getElementById('fecha-inicio-pedido').value;
-    const fechaFinVal = document.getElementById('fecha-fin-pedido').value;
+    const inputInicio = document.getElementById('fecha-desde') || document.getElementById('fecha-inicio-pedido');
+    const inputFin = document.getElementById('fecha-hasta') || document.getElementById('fecha-fin-pedido');
 
-    const inicio = new Date(`${fechaInicioVal}T00:00:00`);
-    const fin = new Date(`${fechaFinVal}T23:59:59.999`);
+    if (!inputInicio || !inputFin) return;
+
+    const fechaInicioVal = inputInicio.value;
+    const fechaFinVal = inputFin.value;
+
+    if (!fechaInicioVal || !fechaFinVal) return;
 
     const { data: pedidos, error } = await supabaseClient
       .from('pedidos')
       .select('productos')
-      .gte('created_at', inicio.toISOString())
-      .lte('created_at', fin.toISOString());
+      .gte('created_at', `${fechaInicioVal}T00:00:00`)
+      .lte('created_at', `${fechaFinVal}T23:59:59`);
 
     if (error) throw error;
 
-    // Objeto para acumular piezas pedidas por cada ítem individual
     const totales = {};
 
     if (pedidos && pedidos.length > 0) {
@@ -626,10 +598,8 @@ async function procesarResumenPedidos() {
       });
     }
 
-    // Helper para obtener cantidad
     const getCant = (nombre) => totales[nombre] || 0;
 
-    // CÁLCULO CONSOLIDADO PARA HORNO
     const gruposHorno = [
       {
         nombre: "BARRITA / BARRITA DOBLE",
@@ -729,8 +699,6 @@ async function procesarResumenPedidos() {
         rendimientoTexto: "6 piezas/sartén",
         sartenes: Math.ceil(getCant("BARRA CUADRADA") / 6)
       },
-      
-      // PRODUCCIÓN EN LATAS (48 pzs/lata)
       {
         nombre: "TOSTADO / TOSTADO DOBLE",
         piezasBase: getCant("TOSTADO") + (getCant("TOSTADO DOBLE") * 2),
@@ -779,17 +747,15 @@ async function procesarResumenPedidos() {
         formulaTexto: `${getCant("BARRA DE MANTEQUILLA")} piezas`,
         rendimientoTexto: "1 barra/unidad",
         sartenes: getCant("BARRA DE MANTEQUILLA")
-      }
-      ,
+      },
       {
         nombre: "CACHO CON MANTEQUILLA",
         piezasBase: getCant("CACHO CON MANTEQUILLA"),
         formulaTexto: `${getCant("CACHO CON MANTEQUILLA")} piezas`,
         rendimientoTexto: "1 cacho/unidad",
         sartenes: getCant("CACHO CON MANTEQUILLA")
-      }
-      ,
-       {
+      },
+      {
         nombre: "ENROLLADO DOBLE",
         piezasBase: getCant("ENROLLADO DOBLE") * 2,
         formulaTexto: `${getCant("ENROLLADO DOBLE")} D × 2`,
@@ -798,130 +764,626 @@ async function procesarResumenPedidos() {
       }
     ];
 
-    // Llenar Tabla Consolidada
-    const tbodyHorno = document.querySelector('#tabla-consolidado-horno tbody');
-    if (tbodyHorno) tbodyHorno.innerHTML = '';
-    
-    let sumaSartenesTotales = 0;
-    let sumaPiezasTotales = 0;
-
-    gruposHorno.forEach(g => {
-      if (g.piezasBase > 0 || g.sartenes > 0) {
-        sumaSartenesTotales += g.sartenes;
-        sumaPiezasTotales += g.piezasBase;
-
-        if (tbodyHorno) {
+    const tbodyHorno = document.getElementById('tbody-consolidado-horno');
+    if (tbodyHorno) {
+      tbodyHorno.innerHTML = '';
+      gruposHorno.forEach(g => {
+        if (g.piezasBase > 0 || g.sartenes > 0) {
           const fila = document.createElement('tr');
           fila.innerHTML = `
             <td><strong>${g.nombre}</strong></td>
             <td>${g.formulaTexto}</td>
             <td>${g.rendimientoTexto}</td>
-            <td><strong style="color: #d9534f; font-size: 1.1em;">${g.sartenes}</strong></td>
+            <td><strong style="color: #ef4444; font-size: 1.1em;">${g.sartenes}</strong></td>
           `;
           tbodyHorno.appendChild(fila);
         }
-      }
-    });
+      });
 
-    if (tbodyHorno && tbodyHorno.children.length === 0) {
-      tbodyHorno.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay pedidos registrados en la fecha seleccionada.</td></tr>';
+      if (tbodyHorno.children.length === 0) {
+        tbodyHorno.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay pedidos registrados en la fecha seleccionada.</td></tr>';
+      }
     }
 
-    // Llenar Tabla Desglosada para Admin
-    const tbodyAdmin = document.querySelector('#tabla-resumen-produccion tbody');
-    if (tbodyAdmin) tbodyAdmin.innerHTML = '';
-
-    const listaProdNombres = Object.keys(totales);
-    if (listaProdNombres.length === 0) {
-      if (tbodyAdmin) {
+    const tbodyAdmin = document.getElementById('tbody-detalle-individual');
+    if (tbodyAdmin) {
+      tbodyAdmin.innerHTML = '';
+      const listaProdNombres = Object.keys(totales);
+      if (listaProdNombres.length === 0) {
         tbodyAdmin.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay productos solicitados.</td></tr>';
+      } else {
+        listaProdNombres.forEach(nombreProd => {
+          const cant = totales[nombreProd];
+          if (cant > 0) {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+              <td><strong>${nombreProd}</strong></td>
+              <td>${cant} piezas/paquetes</td>
+              <td>Registrado en pedido diario</td>
+            `;
+            tbodyAdmin.appendChild(fila);
+          }
+        });
+      }
+    }
+  } catch (err) {
+    console.error('Error procesando el resumen de pedidos:', err);
+  }
+}
+
+
+
+
+// ==========================================
+// MÓDULO DE ARQUEO GENERAL DE CAJA
+// ==========================================
+
+function establecerFechasPorDefecto() {
+  const hoy = new Date().toISOString().split('T')[0];
+  const inputInicio = document.getElementById('fecha-inicio');
+  const inputFin = document.getElementById('fecha-fin');
+
+  if (inputInicio && !inputInicio.value) inputInicio.value = hoy;
+  if (inputFin && !inputFin.value) inputFin.value = hoy;
+}
+
+function cargarHoyArqueo() {
+  const hoy = new Date().toISOString().split('T')[0];
+  const inputInicio = document.getElementById('fecha-inicio');
+  const inputFin = document.getElementById('fecha-fin');
+  if (inputInicio) inputInicio.value = hoy;
+  if (inputFin) inputFin.value = hoy;
+  procesarArqueoGeneral();
+}
+
+async function procesarArqueoGeneral() {
+  try {
+    establecerFechasPorDefecto();
+
+    const fechaInicioVal = document.getElementById('fecha-inicio')?.value;
+    const fechaFinVal = document.getElementById('fecha-fin')?.value;
+
+    if (!fechaInicioVal || !fechaFinVal) return;
+
+    const { data: pedidos, error: errPedidos } = await supabaseClient
+      .from('pedidos')
+      .select('*')
+      .gte('created_at', `${fechaInicioVal}T00:00:00`)
+      .lte('created_at', `${fechaFinVal}T23:59:59`)
+      .order('created_at', { ascending: false });
+
+    if (errPedidos) throw errPedidos;
+
+    const { data: gastos, error: errGastos } = await supabaseClient
+      .from('gastos')
+      .select('*')
+      .gte('created_at', `${fechaInicioVal}T00:00:00`)
+      .lte('created_at', `${fechaFinVal}T23:59:59`)
+      .order('created_at', { ascending: false });
+
+    if (errGastos) throw errGastos;
+
+    let sumaTotalPan = 0;
+    let sumaTotalEfectivo = 0;
+    let sumaTotalGastos = 0;
+
+    const consolidadoBilletes = {
+      '1000': 0, '500': 0, '200': 0, '100': 0,
+      '50': 0, '20': 0, '10': 0, '5': 0, '1': 0, '0.5': 0
+    };
+
+    const tbodyVendedores = document.querySelector('#tabla-vendedores-arqueo tbody');
+    if (tbodyVendedores) tbodyVendedores.innerHTML = '';
+
+    const pedidosValidos = pedidos ? pedidos.filter(p => p.productos && p.productos.length > 0) : [];
+
+    if (pedidosValidos.length === 0) {
+      if (tbodyVendedores) {
+        tbodyVendedores.innerHTML = '<tr><td colspan="6" style="text-align:center;">No hay registros de ventas en el rango seleccionado.</td></tr>';
       }
     } else {
-      listaProdNombres.forEach(nombreProd => {
-        const cant = totales[nombreProd];
-        if (cant > 0 && tbodyAdmin) {
+      pedidosValidos.forEach(p => {
+        const montoPan = parseFloat(p.total_monto) || 0;
+        const montoEfectivo = parseFloat(p.total_efectivo) || 0;
+        sumaTotalPan += montoPan;
+        sumaTotalEfectivo += montoEfectivo;
+
+        if (p.desglose_efectivo) {
+          for (const denom in p.desglose_efectivo) {
+            if (consolidadoBilletes[denom] !== undefined) {
+              consolidadoBilletes[denom] += parseInt(p.desglose_efectivo[denom]) || 0;
+            }
+          }
+        }
+
+        const dif = parseFloat(p.diferencia) || 0;
+        let claseDif = dif === 0 ? 'texto-verde' : (dif < 0 ? 'texto-rojo' : 'texto-naranja');
+        const fechaFormateada = p.created_at ? p.created_at.replace('T', ' ').slice(0, 16) : 'N/A';
+
+        if (tbodyVendedores) {
           const fila = document.createElement('tr');
           fila.innerHTML = `
-            <td><strong>${nombreProd}</strong></td>
-            <td>${cant} piezas/paquetes</td>
-            <td>Registrado en pedido diario</td>
+            <td><strong>${p.vendedor}</strong></td>
+            <td>${fechaFormateada}</td>
+            <td>C$ ${montoPan.toFixed(2)}</td>
+            <td>C$ ${montoEfectivo.toFixed(2)}</td>
+            <td class="${claseDif}">C$ ${dif.toFixed(2)}</td>
+            <td><span class="badge-estado">${p.estado || 'GUARDADO'}</span></td>
           `;
-          tbodyAdmin.appendChild(fila);
+          tbodyVendedores.appendChild(fila);
         }
       });
     }
 
-    // Actualizar Tarjetas de Resumen Superior
-    const elCardPiezas = document.getElementById('card-total-piezas');
-    const elCardSartenes = document.getElementById('card-total-sartenes');
-    if (elCardPiezas) elCardPiezas.innerText = sumaPiezasTotales;
-    if (elCardSartenes) elCardSartenes.innerText = sumaSartenesTotales;
+    if (gastos && gastos.length > 0) {
+      gastos.forEach(g => {
+        sumaTotalGastos += parseFloat(g.monto) || 0;
+      });
+    }
+
+    const elCardPan = document.getElementById('card-total-pan');
+    const elCardEfectivo = document.getElementById('card-total-efectivo');
+    const elCardGastos = document.getElementById('card-total-gastos');
+
+    if (elCardPan) elCardPan.innerText = `C$${sumaTotalPan.toFixed(2)}`;
+    if (elCardEfectivo) elCardEfectivo.innerText = `C$${sumaTotalEfectivo.toFixed(2)}`;
+    if (elCardGastos) elCardGastos.innerText = `C$${sumaTotalGastos.toFixed(2)}`;
+
+    const diferenciaTotal = (sumaTotalEfectivo + sumaTotalGastos) - sumaTotalPan;
+    const cardDif = document.getElementById('card-diferencia');
+    const cardDifBox = document.getElementById('card-diferencia-box');
+
+    if (cardDif) cardDif.innerText = `C$${diferenciaTotal.toFixed(2)}`;
+    if (cardDifBox) {
+      cardDifBox.style.backgroundColor = diferenciaTotal === 0 ? '#10b981' : (diferenciaTotal < 0 ? '#ef4444' : '#f59e0b');
+    }
+
+    const tbodyBilletes = document.querySelector('#tabla-consolidado-dinero tbody');
+    if (tbodyBilletes) {
+      tbodyBilletes.innerHTML = '';
+      const denomsOrdenadas = ['1000', '500', '200', '100', '50', '20', '10', '5', '1', '0.5'];
+      denomsOrdenadas.forEach(denom => {
+        const cant = consolidadoBilletes[denom] || 0;
+        const subtotal = parseFloat(denom) * cant;
+
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td><strong>C$${denom}</strong></td>
+          <td>${cant}</td>
+          <td>C$${subtotal.toFixed(2)}</td>
+        `;
+        tbodyBilletes.appendChild(fila);
+      });
+    }
 
   } catch (err) {
-    console.error('Error procesando el resumen de pedidos:', err);
-    alert('❌ Ocurrió un error al consolidar los pedidos.');
+    console.error('Error procesando el arqueo general:', err);
   }
 }
 
-// ==========================================
-// MÓDULO DE GESTIÓN DE GASTOS
-// ==========================================
+function exportarExcelArqueo() {
+  const tabla = document.getElementById('tabla-vendedores-arqueo');
+  if (!tabla) return;
+  let csv = [];
+  for (let i = 0; i < tabla.rows.length; i++) {
+    let row = [], cols = tabla.rows[i].querySelectorAll('td, th');
+    for (let j = 0; j < cols.length; j++) {
+      row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+    }
+    csv.push(row.join(','));
+  }
+  const csvFile = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+  const downloadLink = document.createElement('a');
+  downloadLink.download = `Arqueo_General_${new Date().toISOString().slice(0,10)}.csv`;
+  downloadLink.href = window.URL.createObjectURL(csvFile);
+  downloadLink.style.display = 'none';
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+}
+async function abrirPedido(vendedor) {
+  pedidoIdActual = null; 
+  try {
+    const response = await fetch('formulario_pedido.html');
+    const html = await response.text();
+    document.getElementById('app-content').innerHTML = html;
+    
+    const elVendedor = document.getElementById('nombre-vendedor');
+    if (elVendedor) elVendedor.innerText = vendedor;
 
-function abrirFormularioGasto() {
-  const htmlGasto = `
-    <div class="pedido-container" style="max-width: 500px; margin: 20px auto; background: #fff; padding: 20px; border-radius: 8px; border: 2px solid #fd7e14;">
-      <h2 style="text-align: center; margin-bottom: 15px; color: #fd7e14;">💸 Registrar Gasto de Caja</h2>
-      <form id="form-gasto" onsubmit="guardarGasto(event)">
-        <div style="margin-bottom: 12px;">
-          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Concepto / Categoría:</label>
-          <select id="gasto-concepto" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
-            <option value="Bolsas y Empaques">Bolsas y Empaques</option>
-            <option value="Insumos / Materiales">Insumos / Materiales</option>
-            <option value="Transporte / Flete">Transporte / Flete</option>
-            <option value="Mantenimiento">Mantenimiento</option>
-            <option value="Otros Gastos">Otros Gastos</option>
-          </select>
-        </div>
-        <div style="margin-bottom: 12px;">
-          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Monto (C$):</label>
-          <input type="number" id="gasto-monto" step="0.01" min="1" placeholder="Ej. 200.00" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required />
-        </div>
-        <div style="margin-bottom: 15px;">
-          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Observación / Detalle:</label>
-          <input type="text" id="gasto-observacion" placeholder="Ej. Compra de 200 bolsas para pan" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" />
-        </div>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-          <button type="submit" class="btn-circulo btn-guardar" style="width: auto; padding: 10px 20px; height: auto;">Guardar Gasto</button>
-          <button type="button" class="btn-circulo btn-volver" onclick="volverInicio()" style="width: auto; padding: 10px 20px; height: auto;">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  `;
-  document.getElementById('app-content').innerHTML = htmlGasto;
+    // 1. Cargar la lista de productos y precios directamente desde Supabase
+    await cargarProductosDinamicos();
+
+    // 2. Cargar el pedido existente del día
+    cargarPedidoExistente(vendedor);
+  } catch (error) {
+    console.error('Error al abrir pedido:', error);
+  }
 }
 
-async function guardarGasto(e) {
-  e.preventDefault();
-  const concepto = document.getElementById('gasto-concepto').value;
-  const monto = parseFloat(document.getElementById('gasto-monto').value) || 0;
-  const observacion = document.getElementById('gasto-observacion').value;
+async function cargarProductosDinamicos() {
+  const tbody = document.getElementById('tabla-productos-body');
+  if (!tbody) return;
 
-  if (monto <= 0) {
-    alert('⚠️ Ingrese un monto válido.');
+  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Cargando productos...</td></tr>';
+
+  const { data: productos, error } = await supabaseClient
+    .from('productos')
+    .select('*')
+    .order('orden', { ascending: true });
+
+  if (error) {
+    console.error('Error al obtener productos de Supabase:', error);
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Error al cargar productos</td></tr>';
     return;
   }
 
+  tbody.innerHTML = '';
+
+  productos.forEach(prod => {
+    const fila = document.createElement('tr');
+    // Guardamos el precio en el atributo data-precio para los cálculos internos
+    fila.setAttribute('data-precio', prod.precio);
+    fila.innerHTML = `
+      <td>${prod.nombre}</td>
+      <td><input type="number" min="0" placeholder="0" class="cant-prod" oninput="calcularPedido()"></td>
+      <td class="total-fila" style="text-align: right;">C$0.00</td>
+    `;
+    tbody.appendChild(fila);
+  });
+}
+// ==========================================
+// MÓDULO DE GASTOS
+// ==========================================
+
+async function guardarGasto(event) {
+  event.preventDefault();
+  
+  const concepto = document.getElementById('concepto-gasto').value.trim();
+  const monto = parseFloat(document.getElementById('monto-gasto').value) || 0;
+  const observacion = document.getElementById('observacion-gasto').value.trim();
+
+  if (!concepto || monto <= 0) {
+    await mostrarConfirmacionModal({
+      titulo: '⚠️ Datos incompletos',
+      mensaje: 'Por favor ingrese un concepto y un monto válido.',
+      textoConfirmar: 'Entendido'
+    });
+    return;
+  }
+
+  const confirmado = await mostrarConfirmacionModal({
+    titulo: '💾 Registrar Gasto',
+    mensaje: `¿Desea registrar el gasto de C$${monto.toFixed(2)} por "${concepto}"?`,
+    textoConfirmar: 'Sí, Guardar'
+  });
+
+  if (!confirmado) return;
+
   try {
-    const { data, error } = await supabaseClient
+    const { error } = await supabaseClient
       .from('gastos')
       .insert([{ concepto, monto, observacion }]);
 
     if (error) throw error;
 
-    alert(`✅ Gasto de C$${monto.toFixed(2)} registrado correctamente.`);
-    volverInicio();
+    document.getElementById('form-gasto').reset();
+    await cargarGastosHoy();
+
+    await mostrarConfirmacionModal({
+      titulo: '✅ Gasto Registrado',
+      mensaje: 'El gasto se ha guardado correctamente en el sistema.',
+      textoConfirmar: 'Aceptar'
+    });
   } catch (err) {
-    console.error('Error al guardar el gasto:', err);
-    alert('❌ Ocurrió un error al registrar el gasto.');
+    console.error('Error al guardar gasto:', err);
+    await mostrarConfirmacionModal({
+      titulo: '❌ Error',
+      mensaje: 'No se pudo guardar el gasto en Supabase.',
+      tipo: 'danger',
+      textoConfirmar: 'Aceptar'
+    });
   }
+}
+
+async function cargarGastosHoy() {
+  const tbody = document.getElementById('tbody-gastos');
+  if (!tbody) return;
+
+  const hoy = new Date().toISOString().split('T')[0];
+
+  try {
+    const { data: gastos, error } = await supabaseClient
+      .from('gastos')
+      .select('*')
+      .gte('created_at', `${hoy}T00:00:00`)
+      .lte('created_at', `${hoy}T23:59:59`)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    tbody.innerHTML = '';
+
+    if (!gastos || gastos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay gastos registrados hoy.</td></tr>';
+      return;
+    }
+
+    gastos.forEach(g => {
+      const hora = g.created_at ? g.created_at.replace('T', ' ').slice(11, 16) : 'N/A';
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${hora}</td>
+        <td><strong>${g.concepto}</strong></td>
+        <td>C$${parseFloat(g.monto).toFixed(2)}</td>
+        <td>${g.observacion || '-'}</td>
+        <td><button class="btn-modal btn-modal-danger" style="padding: 5px 10px; font-size: 0.8rem;" onclick="eliminarGasto(${g.id})">Borrar</button></td>
+      `;
+      tbody.appendChild(fila);
+    });
+  } catch (err) {
+    console.error('Error al cargar gastos:', err);
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Error al cargar gastos</td></tr>';
+  }
+}
+
+async function eliminarGasto(id) {
+  const confirmado = await mostrarConfirmacionModal({
+    titulo: '🗑️ Eliminar Gasto',
+    mensaje: '¿Está seguro que desea eliminar este registro de gasto?',
+    tipo: 'danger',
+    textoConfirmar: 'Sí, Eliminar'
+  });
+
+  if (!confirmado) return;
+
+  try {
+    const { error } = await supabaseClient
+      .from('gastos')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    await cargarGastosHoy();
+  } catch (err) {
+    console.error('Error al eliminar gasto:', err);
+  }
+}
+
+// Reemplazar la función abrirFormularioGasto para que cargue la lista automáticamente
+function abrirFormularioGasto() {
+  fetch('formulario_gasto.html')
+    .then(response => {
+      if (!response.ok) throw new Error('Error al cargar la plantilla de gastos');
+      return response.text();
+    })
+    .then(html => {
+      document.getElementById('app-content').innerHTML = html;
+      cargarGastosHoy();
+    })
+    .catch(err => {
+      console.error('Error al abrir formulario de gastos:', err);
+    });
+}
+function cargarConsolidadoHoy() {
+  const hoy = new Date().toISOString().split('T')[0];
+  const inputInicio = document.getElementById('fecha-desde');
+  const inputFin = document.getElementById('fecha-hasta');
+  if (inputInicio) inputInicio.value = hoy;
+  if (inputFin) inputFin.value = hoy;
+  procesarResumenPedidos();
+}
+// ==========================================
+// CONTROL DESPLEGABLE DE HISTORIAL
+// ==========================================
+
+function toggleHistorial() {
+  const seccion = document.getElementById('seccion-historial');
+  if (seccion) {
+    if (seccion.style.display === 'none' || seccion.style.display === '') {
+      seccion.style.display = 'block';
+      // Opcional: Hacer scroll suave hacia el historial al abrirlo
+      seccion.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      seccion.style.display = 'none';
+    }
+  }
+}
+// ==========================================
+// MÓDULO DE VENTA LOCAL TÁCTICA (POS)
+// ==========================================
+
+let carritoVentaLocal = [];
+let productosDisponiblesLocal = [];
+
+function abrirVentaLocal() {
+  carritoVentaLocal = [];
+  fetch('venta_local.html')
+    .then(response => {
+      if (!response.ok) throw new Error('Error al cargar venta_local.html');
+      return response.text();
+    })
+    .then(html => {
+      document.getElementById('app-content').innerHTML = html;
+      cargarProductosVentaLocal();
+    })
+    .catch(err => console.error('Error abriendo Venta Local:', err));
+}
+
+async function cargarProductosVentaLocal() {
+  const grid = document.getElementById('grid-productos-local');
+  if (!grid) return;
+
+  grid.innerHTML = '<div style="grid-column: span 2; text-align:center; padding: 20px;">Cargando productos...</div>';
+
+  try {
+    const { data: productos, error } = await supabaseClient
+      .from('productos')
+      .select('*')
+      .order('orden', { ascending: true });
+
+    if (error) throw error;
+
+    productosDisponiblesLocal = productos || [];
+    grid.innerHTML = '';
+
+    productosDisponiblesLocal.forEach(prod => {
+      // Usamos precio_local si existe, de lo contrario usamos precio + margen o precio normal
+      const precioLocal = prod.precio_local !== undefined ? prod.precio_local : (prod.precio + 2); 
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn-vendedor';
+      btn.style.cssText = `
+        background-color: #f59e0b; 
+        color: white; 
+        padding: 12px 8px; 
+        border-radius: 10px; 
+        border: none; 
+        cursor: pointer; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        justify-content: center; 
+        gap: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.1s;
+      `;
+      btn.innerHTML = `
+        <span style="font-weight: 700; font-size: 0.95rem; text-align: center;">${prod.nombre}</span>
+        <span style="font-size: 0.85rem; background: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 6px;">C$${precioLocal.toFixed(2)}</span>
+      `;
+      btn.onclick = () => agregarAlCarritoLocal(prod.id, precioLocal);
+      grid.appendChild(btn);
+    });
+  } catch (err) {
+    console.error('Error cargando productos para venta local:', err);
+    grid.innerHTML = '<div style="color:red; text-align:center;">Error al cargar catálogo</div>';
+  }
+}
+
+function agregarAlCarritoLocal(idProd, precio) {
+  const producto = productosDisponiblesLocal.find(p => p.id === idProd);
+  if (!producto) return;
+
+  const itemExistente = carritoVentaLocal.find(item => item.id === idProd);
+  if (itemExistente) {
+    itemExistente.cantidad += 1;
+  } else {
+    carritoVentaLocal.push({
+      id: producto.id,
+      producto: producto.nombre,
+      precio: precio,
+      cantidad: 1
+    });
+  }
+  renderizarCarritoLocal();
+}
+
+function cambiarCantidadLocal(idProd, delta) {
+  const item = carritoVentaLocal.find(i => i.id === idProd);
+  if (!item) return;
+
+  item.cantidad += delta;
+  if (item.cantidad <= 0) {
+    carritoVentaLocal = carritoVentaLocal.filter(i => i.id !== idProd);
+  }
+  renderizarCarritoLocal();
+}
+
+function renderizarCarritoLocal() {
+  const tbody = document.getElementById('tbody-carrito-local');
+  const elTotal = document.getElementById('total-venta-local');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  let totalGeneral = 0;
+
+  if (carritoVentaLocal.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 20px;">El carrito está vacío</td></tr>';
+    if (elTotal) elTotal.innerText = 'C$0.00';
+    return;
+  }
+
+  carritoVentaLocal.forEach(item => {
+    const subtotal = item.precio * item.cantidad;
+    totalGeneral += subtotal;
+
+    const fila = document.createElement('tr');
+    fila.style.borderBottom = '1px solid #f1f5f9';
+    fila.innerHTML = `
+      <td style="padding: 8px 4px; font-weight: 600; font-size: 0.9rem;">${item.producto}</td>
+      <td style="padding: 8px 4px; text-align: center;">
+        <button onclick="cambiarCantidadLocal(${item.id}, -1)" style="padding: 2px 6px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer;">-</button>
+        <span style="margin: 0 6px; font-weight: 600;">${item.cantidad}</span>
+        <button onclick="cambiarCantidadLocal(${item.id}, 1)" style="padding: 2px 6px; background: #e2e8f0; border: none; border-radius: 4px; cursor: pointer;">+</button>
+      </td>
+      <td style="padding: 8px 4px; text-align: right; font-weight: 600;">C$${subtotal.toFixed(2)}</td>
+      <td style="padding: 8px 4px; text-align: center;">
+        <button onclick="cambiarCantidadLocal(${item.id}, -${item.cantidad})" style="color: #ef4444; background: none; border: none; cursor: pointer; font-size: 1rem;">×</button>
+      </td>
+    `;
+    tbody.appendChild(fila);
+  });
+
+  if (elTotal) elTotal.innerText = `C$${totalGeneral.toFixed(2)}`;
+}
+
+async function cobrarVentaLocal() {
+  if (carritoVentaLocal.length === 0) {
+    await mostrarConfirmacionModal({
+      titulo: '⚠️ Carrito Vacío',
+      mensaje: 'Agregue al menos un producto al ticket antes de cobrar.',
+      textoConfirmar: 'Entendido'
+    });
+    return;
+  }
+
+  let totalMonto = carritoVentaLocal.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+  let totalUnidades = carritoVentaLocal.reduce((acc, item) => acc + item.cantidad, 0);
+
+  const confirmado = await mostrarConfirmacionModal({
+    titulo: '💰 Confirmar Venta Local',
+    mensaje: `¿Desea registrar y cobrar esta venta por un total de C$${totalMonto.toFixed(2)}?`,
+    textoConfirmar: 'Sí, Cobrar'
+  });
+
+  if (!confirmado) return;
+
+  const payload = {
+    vendedor: 'VENTA LOCAL',
+    productos: carritoVentaLocal.map(i => ({ producto: i.producto, precio: i.precio, cantidad: i.cantidad, subtotal: i.precio * i.cantidad })),
+    total_unidades: totalUnidades,
+    total_monto: totalMonto,
+    total_efectivo: totalMonto, // Se asume pago exacto al contado
+    diferencia: 0,
+    estado: 'LIQUIDADO'
+  };
+
+  try {
+    const { error } = await supabaseClient
+      .from('pedidos')
+      .insert([payload]);
+
+    if (error) throw error;
+
+    await mostrarConfirmacionModal({
+      titulo: '✅ Venta Exitosa',
+      mensaje: 'La venta local se ha registrado y liquidado correctamente.',
+      textoConfirmar: 'Aceptar'
+    });
+
+    abrirVentaLocal(); // Reiniciar ticket para la siguiente venta
+  } catch (err) {
+    console.error('Error al guardar venta local:', err);
+    await mostrarConfirmacionModal({
+      titulo: '❌ Error',
+      mensaje: 'No se pudo registrar la venta en Supabase.',
+      tipo: 'danger',
+      textoConfirmar: 'Aceptar'
+    });
+  }
+}
+function cargarConsolidado() {
+  procesarResumenPedidos();
 }

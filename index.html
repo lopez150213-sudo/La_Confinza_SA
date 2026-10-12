@@ -14,39 +14,38 @@
   <div id="app-content">
 
     <header class="header-banner">
-      <h1>PANADERIA LA CONFIANZA S.A</h1>
+      <h1>PANADERIA LA CONFIANZA S.A 🇳🇮</h1>
     </header>
 
-    <main class="dashboard-container">
-      <section class="vendedores-grid">
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('MARTA')">MARTA</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ISABEL V')">ISABEL V</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ANTONIA')">ANTONIA</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('MIGUEL')">MIGUEL</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ALEJANDRO')">ALEJANDRO</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('MARCOS')">MARCOS</button>
+   <!-- Sección de Vendedores -->
+    <section class="vendedores-grid">
+      <button class="btn-circulo btn-vendedor" data-vendedor="MARTA" onclick="abrirPedido('MARTA')">MARTA</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="ISABEL V" onclick="abrirPedido('ISABEL V')">ISABEL V</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="ANTONIA" onclick="abrirPedido('ANTONIA')">ANTONIA</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="MIGUEL" onclick="abrirPedido('MIGUEL')">MIGUEL</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="ALEJANDRO" onclick="abrirPedido('ALEJANDRO')">ALEJANDRO</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="MARCOS" onclick="abrirPedido('MARCOS')">MARCOS</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="CHOMBO" onclick="abrirPedido('CHOMBO')">CHOMBO</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="RAFAELA" onclick="abrirPedido('RAFAELA')">RAFAELA</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="ALBERTH" onclick="abrirPedido('ALBERTH')">ALBERTH</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="KARLA" onclick="abrirPedido('KARLA')">KARLA</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="ISABEL L" onclick="abrirPedido('ISABEL L')">ISABEL L</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="MEDINA" onclick="abrirPedido('MEDINA')">MEDINA</button>
+      <button class="btn-circulo btn-vendedor" data-vendedor="ENGEL" onclick="abrirPedido('ENGEL')">ENGEL</button>
+    </section>
 
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('CHOMBO')">CHOMBO</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('RAFAELA')">RAFAELA</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ALBERTH')">ALBERTH</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('KARLA')">KARLA</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ISABEL L')">ISABEL L</button>
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('MEDINA')">MEDINA</button>
-
-        <button class="btn-circulo btn-vendedor" onclick="abrirPedido('ENGEL')">ENGEL</button>
-      </section>
-
+    <!-- Línea divisoria y Módulos Principales -->
+    <div style="margin-top: 35px; padding-top: 25px; border-top: 2px dashed #e6d2b5;">
+      <h3 style="margin-bottom: 18px; color: #3b2314; font-size: 1.15rem; font-weight: 700;">Módulos del Sistema</h3>
+      
       <section class="acciones-grid">
-        <!-- Botón para Venta Local (al lado de los botones de vendedores) -->
-<button class="btn-circulo btn-accion" style="background-color: #6f42c1; color: white;" onclick="abrirPedido('VENTA LOCAL')">VENTA LOCAL</button>
-
-<!-- Botón para Registrar Gastos (en la sección de acciones/arqueo) -->
-<button class="btn-circulo btn-accion" style="background-color: #fd7e14; color: white;" onclick="abrirFormularioGasto()">GASTOS</button>
-        <button class="btn-circulo btn-accion" onclick="abrirModulo('PEDIDO')">PEDIDO</button>
-        <button class="btn-circulo btn-accion" onclick="abrirArqueoGeneral()">ARQUEO</button>
-
+        <button class="btn-circulo btn-accion" style="background-color: #8b5cf6; color: white;" onclick="abrirVentaLocal()">VENTA LOCAL</button>
+        <button class="btn-circulo btn-accion" style="background-color: #faa200; color: white;" onclick="abrirFormularioGasto()">GASTOS</button>
+        <button class="btn-circulo btn-accion" style="background-color: #d99f3a; color: white;" onclick="abrirModulo('PEDIDO')">PEDIDO</button>
+        <button class="btn-circulo btn-accion" style="background-color: #a55d22; color: white;" onclick="abrirArqueoGeneral()">ARQUEO</button>
+        <button class="btn-circulo btn-accion" style="background-color: #3b2314; color: white;" onclick="abrirModulo('PLANILLA')">PLANILLA</button>
       </section>
-    </main>
+    </div>
 
   </div>
 
